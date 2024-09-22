@@ -101,6 +101,17 @@ int main(int, char**)
     // Our state
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+    static int n = 3;
+    static int prevN = 3;
+    static std::vector<int> permutation1;
+    static std::vector<int> permutation2;
+
+    for (int i = 0; i < n; i++)
+    {
+        permutation1.push_back(i + 1);
+        permutation2.push_back(i + 1);
+    }
+
     // Main loop
     bool done = false;
     while (!done)
@@ -133,13 +144,26 @@ int main(int, char**)
 
         {
             static int counter = 0;
-            static int n = 3;
-            static std::vector<int> permutation1;
-            static std::vector<int> permutation2;
 
             ImGui::Begin("Calculator");
 
-            ImGui::SliderInt("Symbols", &n, 1, 10);
+            // The slider returns true if the value changed
+            if (ImGui::SliderInt("Symbols", &n, 1, 10))
+            {
+                if (prevN < n)
+                {
+                    permutation1.push_back(n);
+                    permutation2.push_back(n);
+                }
+                
+                if (prevN > n)
+                {
+                    permutation1.resize(n);
+                    permutation2.resize(n);
+                }
+
+                prevN = n;
+            }
             
             if (ImGui::BeginTable("fullTable", 2, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
             {
@@ -160,7 +184,6 @@ int main(int, char**)
                     for (int i = 0; i < n; i++)
                     {
                         ImGui::TableNextColumn();
-                        permutation2.push_back(i + 1);
                         // '##hidden' tells imgui to not show the label. But it still needs a unique label to internally identify the input object
                         std::string labelText = "##hidden Perm2Input " + std::to_string(i + 1);
                         const char* label = labelText.c_str();
@@ -187,7 +210,6 @@ int main(int, char**)
                     for (int i = 0; i < n; i++)
                     {
                         ImGui::TableNextColumn();
-                        permutation1.push_back(i + 1);
                         // '##hidden' tells imgui to not show the label. But it still needs a unique label to internally identify the input object
                         std::string labelText = "##hidden Perm1Input " + std::to_string(i + 1);
                         const char* label = labelText.c_str();
