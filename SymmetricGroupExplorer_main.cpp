@@ -132,17 +132,72 @@ int main(int, char**)
         ImGui::NewFrame();
 
         {
-            static int n = 3;
             static int counter = 0;
+            static int n = 3;
+            static std::vector<int> permutation1;
+            static std::vector<int> permutation2;
 
             ImGui::Begin("Calculator");
 
             ImGui::SliderInt("Symbols", &n, 1, 10);
-            std::vector<int> permutation1;
-            for (int i = 0; i < n; i++)
+            
+            if (ImGui::BeginTable("fullTable", 2, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
             {
-                permutation1.push_back(0);
-                ImGui::InputInt(("Int" + std::to_string(i)).c_str(), &permutation1[i], 1, 100);
+                ImGui::TableNextColumn();
+
+                if (ImGui::BeginTable("permutation2Table", n, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
+                {
+                    for (int i = 0; i < n; i++)
+                    {
+                        char label[32];
+                        sprintf(label, "%d", i + 1);
+                        ImGui::TableNextColumn();
+                        ImGui::Text(label);
+                    }
+
+                    ImGui::TableNextRow();
+
+                    for (int i = 0; i < n; i++)
+                    {
+                        ImGui::TableNextColumn();
+                        permutation2.push_back(i + 1);
+                        // '##hidden' tells imgui to not show the label. But it still needs a unique label to internally identify the input object
+                        std::string labelText = "##hidden Perm2Input " + std::to_string(i + 1);
+                        const char* label = labelText.c_str();
+                        // 0 step and 0 step_fast indicate "no plus or minus buttons".
+                        ImGui::InputInt(label, &permutation2[i], 0, 0);
+                    }
+                    ImGui::EndTable();
+                }
+                
+                ImGui::TableNextColumn();
+
+                if (ImGui::BeginTable("permutation1Table", n, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
+                {
+                    for (int i = 0; i < n; i++)
+                    {
+                        char label[32];
+                        sprintf(label, "%d", i + 1);
+                        ImGui::TableNextColumn();
+                        ImGui::Text(label);
+                    }
+
+                    ImGui::TableNextRow();
+
+                    for (int i = 0; i < n; i++)
+                    {
+                        ImGui::TableNextColumn();
+                        permutation1.push_back(i + 1);
+                        // '##hidden' tells imgui to not show the label. But it still needs a unique label to internally identify the input object
+                        std::string labelText = "##hidden Perm1Input " + std::to_string(i + 1);
+                        const char* label = labelText.c_str();
+                        // 0 step and 0 step_fast indicate "no plus or minus buttons".
+                        ImGui::InputInt(label, &permutation1[i], 0, 0);
+                    }
+                    ImGui::EndTable();
+                }
+
+                ImGui::EndTable();
             }
 
             if (ImGui::Button("Calculate"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
