@@ -63,6 +63,7 @@ FrameContext* WaitForNextFrameResources();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 void processPermutationInput(int i, std::vector<int>& inputBuffer, std::vector<int>& permutation);
+void shrinkPermutation(std::vector<int>& inputBuffer, std::vector<int>& permutation);
 
 // Main code
 int main(int, char**)
@@ -169,10 +170,8 @@ int main(int, char**)
                 
                 if (prevN > n)
                 {
-                    inputBuffer1.resize(n);
-                    inputBuffer2.resize(n);
-                    permutation1.resize(n);
-                    permutation2.resize(n);
+                    shrinkPermutation(inputBuffer1, permutation1);
+                    shrinkPermutation(inputBuffer2, permutation2);
                 }
 
                 prevN = n;
@@ -623,4 +622,20 @@ void processPermutationInput(int i, std::vector<int>& inputBuffer, std::vector<i
     {
         inputBuffer[i] = permutation[i];
     }
+}
+
+void shrinkPermutation(std::vector<int>& inputBuffer, std::vector<int>& permutation)
+{
+    int n = permutation.size();
+    for (int i = 0; i < n; i++)
+    {
+        if (permutation[i] == n)
+        {
+            permutation[i] = permutation[n - 1];
+            inputBuffer[i] = inputBuffer[n - 1];
+        }
+    }
+
+    permutation.resize(n - 1);
+    inputBuffer.resize(n - 1);
 }
