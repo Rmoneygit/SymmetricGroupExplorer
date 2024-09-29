@@ -564,7 +564,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 void processPermutationInput(int i, std::vector<int>& inputBuffer, std::vector<int>& permutation)
 {
-    if (inputBuffer.size() == permutation.size())
+    if (inputBuffer.size() != permutation.size())
     {
         throw std::invalid_argument("Expected inputBuffer and permutation to have the same size.");
     }
