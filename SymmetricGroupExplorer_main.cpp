@@ -59,6 +59,8 @@ void WaitForLastSubmittedFrame();
 FrameContext* WaitForNextFrameResources();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+void processPermutationInput(int i, std::vector<int>& inputBuffer, std::vector<int>& permutation);
+
 // Main code
 int main(int, char**)
 {
@@ -103,11 +105,15 @@ int main(int, char**)
 
     static int n = 3;
     static int prevN = 3;
+    static std::vector<int> inputBuffer1;
+    static std::vector<int> inputBuffer2;
     static std::vector<int> permutation1;
     static std::vector<int> permutation2;
 
     for (int i = 0; i < n; i++)
     {
+        inputBuffer1.push_back(i + 1);
+        inputBuffer2.push_back(i + 1);
         permutation1.push_back(i + 1);
         permutation2.push_back(i + 1);
     }
@@ -152,12 +158,16 @@ int main(int, char**)
             {
                 if (prevN < n)
                 {
+                    inputBuffer1.push_back(n);
+                    inputBuffer2.push_back(n);
                     permutation1.push_back(n);
                     permutation2.push_back(n);
                 }
                 
                 if (prevN > n)
                 {
+                    inputBuffer1.resize(n);
+                    inputBuffer2.resize(n);
                     permutation1.resize(n);
                     permutation2.resize(n);
                 }
@@ -188,7 +198,10 @@ int main(int, char**)
                         std::string labelText = "##hidden Perm2Input " + std::to_string(i + 1);
                         const char* label = labelText.c_str();
                         // 0 step and 0 step_fast indicate "no plus or minus buttons".
-                        ImGui::InputInt(label, &permutation2[i], 0, 0);
+                        if (ImGui::InputInt(label, &inputBuffer2[i], 0, 0))
+                        {
+                            processPermutationInput(i, inputBuffer2, permutation2);
+                        }
                     }
                     ImGui::EndTable();
                 }
@@ -214,7 +227,10 @@ int main(int, char**)
                         std::string labelText = "##hidden Perm1Input " + std::to_string(i + 1);
                         const char* label = labelText.c_str();
                         // 0 step and 0 step_fast indicate "no plus or minus buttons".
-                        ImGui::InputInt(label, &permutation1[i], 0, 0);
+                        if(ImGui::InputInt(label, &permutation1[i], 0, 0))
+                        {
+                            processPermutationInput(i, inputBuffer1, permutation1);
+                        }
                     }
                     ImGui::EndTable();
                 }
@@ -521,4 +537,16 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
         return 0;
     }
     return ::DefWindowProcW(hWnd, msg, wParam, lParam);
+}
+
+void processPermutationInput(int i, std::vector<int>& inputBuffer, std::vector<int>& permutation)
+{
+    if (inputBuffer[i] > 0 && inputBuffer[i] <= inputBuffer.size())
+    {
+        permutation[i] = inputBuffer[i];
+    }
+    else
+    {
+        inputBuffer[i] = permutation[i];
+    }
 }
