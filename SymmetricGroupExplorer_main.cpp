@@ -156,44 +156,139 @@ int main(int, char**)
         ImGui_ImplWin32_NewFrame();
         ImGui::NewFrame();
 
-        {
+        {          
             static int counter = 0;
-
-            ImGui::Begin("Calculator");
-
-            // The slider returns true if the value changed
-            if (ImGui::SliderInt("Symbols", &n, 1, 10))
+            static bool showCalculator = false;
+            
+            if (ImGui::BeginMainMenuBar())
             {
-                if (prevN < n)
+                if (ImGui::MenuItem("Calculator"))
                 {
-                    for (int i = prevN; i < n; i++)
-                    {
-                        inputBuffer1.push_back(i + 1);
-                        inputBuffer2.push_back(i + 1);
-                        permutation1.push_back(i + 1);
-                        permutation2.push_back(i + 1);
-                    }
+                    showCalculator = true;
                 }
-                
-                if (prevN > n)
-                {
-                    for (int i = 0; i < prevN - n; i++)
-                    {
-                        shrinkPermutation(inputBuffer1, permutation1);
-                        shrinkPermutation(inputBuffer2, permutation2);
-                    }
-                }
-
-                prevN = n;
+                ImGui::EndMainMenuBar();
             }
             
-            if (ImGui::BeginTable("fullTable", 2, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
+            if (showCalculator)
             {
-                ImGui::TableNextColumn();
+                ImGui::Begin("Calculator", &showCalculator);
 
-                if (ImGui::BeginTable("permutation1Table", n, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
+                // The slider returns true if the value changed
+                if (ImGui::SliderInt("Symbols", &n, 1, 10))
                 {
-                    for (int i = 0; i < n; i++)
+                    if (prevN < n)
+                    {
+                        for (int i = prevN; i < n; i++)
+                        {
+                            inputBuffer1.push_back(i + 1);
+                            inputBuffer2.push_back(i + 1);
+                            permutation1.push_back(i + 1);
+                            permutation2.push_back(i + 1);
+                        }
+                    }
+
+                    if (prevN > n)
+                    {
+                        for (int i = 0; i < prevN - n; i++)
+                        {
+                            shrinkPermutation(inputBuffer1, permutation1);
+                            shrinkPermutation(inputBuffer2, permutation2);
+                        }
+                    }
+
+                    prevN = n;
+                }
+
+                if (ImGui::BeginTable("fullTable", 2, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
+                {
+                    ImGui::TableNextColumn();
+
+                    if (ImGui::BeginTable("permutation1Table", n, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
+                    {
+                        for (int i = 0; i < n; i++)
+                        {
+                            char label[32];
+                            sprintf(label, "%d", i + 1);
+                            ImGui::TableNextColumn();
+                            ImGui::Text(label);
+                        }
+
+                        ImGui::TableNextRow();
+
+                        for (int i = 0; i < n; i++)
+                        {
+                            ImGui::TableNextColumn();
+                            // '##hidden' tells imgui to not show the label. But it still needs a unique label to internally identify the input object
+                            std::string labelText = "##hidden Perm1Input " + std::to_string(i + 1);
+                            const char* label = labelText.c_str();
+                            // 0 step and 0 step_fast indicate "no plus or minus buttons".
+                            if (ImGui::InputInt(label, &inputBuffer1[i], 0, 0))
+                            {
+                                try
+                                {
+                                    processPermutationInput(i, inputBuffer1, permutation1);
+                                }
+                                catch (const std::invalid_argument& e) {
+                                    std::cerr << "Error: " << e.what() << std::endl;
+                                }
+                                catch (...) {
+                                    // Catch-all handler for any other exceptions
+                                    std::cerr << "An unexpected error occurred." << std::endl;
+                                }
+                            }
+                        }
+                        ImGui::EndTable();
+                    }
+
+                    ImGui::TableNextColumn();
+
+                    if (ImGui::BeginTable("permutation2Table", n, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
+                    {
+                        for (int i = 0; i < n; i++)
+                        {
+                            char label[32];
+                            sprintf(label, "%d", i + 1);
+                            ImGui::TableNextColumn();
+                            ImGui::Text(label);
+                        }
+
+                        ImGui::TableNextRow();
+
+                        for (int i = 0; i < n; i++)
+                        {
+                            ImGui::TableNextColumn();
+                            // '##hidden' tells imgui to not show the label. But it still needs a unique label to internally identify the input object
+                            std::string labelText = "##hidden Perm2Input " + std::to_string(i + 1);
+                            const char* label = labelText.c_str();
+                            // 0 step and 0 step_fast indicate "no plus or minus buttons".
+                            if (ImGui::InputInt(label, &inputBuffer2[i], 0, 0))
+                            {
+                                try
+                                {
+                                    processPermutationInput(i, inputBuffer2, permutation2);
+                                }
+                                catch (const std::invalid_argument& e) {
+                                    std::cerr << "Error: " << e.what() << std::endl;
+                                }
+                                catch (...) {
+                                    // Catch-all handler for any other exceptions
+                                    std::cerr << "An unexpected error occurred." << std::endl;
+                                }
+                            }
+                        }
+                        ImGui::EndTable();
+                    }
+                    ImGui::EndTable();
+                }
+
+                if (ImGui::Button("Calculate"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+                {
+                    SYM_compose_permutations(permutation1, permutation2, composition);
+                }
+
+                if (ImGui::BeginTable("compositionTable", composition.size(), ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
+                {
+                    for (int i = 0; i < composition.size(); i++)
                     {
                         char label[32];
                         sprintf(label, "%d", i + 1);
@@ -203,99 +298,17 @@ int main(int, char**)
 
                     ImGui::TableNextRow();
 
-                    for (int i = 0; i < n; i++)
-                    {
-                        ImGui::TableNextColumn();
-                        // '##hidden' tells imgui to not show the label. But it still needs a unique label to internally identify the input object
-                        std::string labelText = "##hidden Perm1Input " + std::to_string(i + 1);
-                        const char* label = labelText.c_str();
-                        // 0 step and 0 step_fast indicate "no plus or minus buttons".
-                        if(ImGui::InputInt(label, &inputBuffer1[i], 0, 0))
-                        {
-                            try
-                            {
-                                processPermutationInput(i, inputBuffer1, permutation1);
-                            }
-                            catch (const std::invalid_argument& e) {
-                                std::cerr << "Error: " << e.what() << std::endl;
-                            }
-                            catch (...) {
-                                // Catch-all handler for any other exceptions
-                                std::cerr << "An unexpected error occurred." << std::endl;
-                            }
-                        }
-                    }
-                    ImGui::EndTable();
-                }
-
-                ImGui::TableNextColumn();
-
-                if (ImGui::BeginTable("permutation2Table", n, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
-                {
-                    for (int i = 0; i < n; i++)
+                    for (int i = 0; i < composition.size(); i++)
                     {
                         char label[32];
-                        sprintf(label, "%d", i + 1);
+                        sprintf(label, "%d", composition[i]);
                         ImGui::TableNextColumn();
                         ImGui::Text(label);
                     }
-
-                    ImGui::TableNextRow();
-
-                    for (int i = 0; i < n; i++)
-                    {
-                        ImGui::TableNextColumn();
-                        // '##hidden' tells imgui to not show the label. But it still needs a unique label to internally identify the input object
-                        std::string labelText = "##hidden Perm2Input " + std::to_string(i + 1);
-                        const char* label = labelText.c_str();
-                        // 0 step and 0 step_fast indicate "no plus or minus buttons".
-                        if (ImGui::InputInt(label, &inputBuffer2[i], 0, 0))
-                        {
-                            try
-                            {
-                                processPermutationInput(i, inputBuffer2, permutation2);
-                            }
-                            catch (const std::invalid_argument& e) {
-                                std::cerr << "Error: " << e.what() << std::endl;
-                            }
-                            catch (...) {
-                                // Catch-all handler for any other exceptions
-                                std::cerr << "An unexpected error occurred." << std::endl;
-                            }
-                        }
-                    }
                     ImGui::EndTable();
                 }
-                ImGui::EndTable();
+                ImGui::End();
             }
-
-            if (ImGui::Button("Calculate"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-            {
-                SYM_compose_permutations(permutation1, permutation2, composition);
-            }
-
-            if (ImGui::BeginTable("compositionTable", composition.size(), ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
-            {
-                for (int i = 0; i < composition.size(); i++)
-                {
-                    char label[32];
-                    sprintf(label, "%d", i + 1);
-                    ImGui::TableNextColumn();
-                    ImGui::Text(label);
-                }
-
-                ImGui::TableNextRow();
-
-                for (int i = 0; i < composition.size(); i++)
-                {
-                    char label[32];
-                    sprintf(label, "%d", composition[i]);
-                    ImGui::TableNextColumn();
-                    ImGui::Text(label);
-                }
-                ImGui::EndTable();
-            }
-            ImGui::End();
         }
 
         // Rendering
