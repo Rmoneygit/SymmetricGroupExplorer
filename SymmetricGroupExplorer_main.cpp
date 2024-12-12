@@ -293,6 +293,11 @@ int main(int, char**)
                     SYM_commute_permutations(permutation1, permutation2);
                 }
 
+                if (ImGui::Button("Use Output"))
+                {
+                    copyPermutation(permutation1, composition);
+                }
+
                 if (ImGui::BeginTable("compositionTable", composition.size(), ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
                 {
                     for (int i = 0; i < composition.size(); i++)
@@ -315,8 +320,8 @@ int main(int, char**)
                     ImGui::EndTable();
                 }
 
-                updateInputBuffer(inputBuffer1, permutation1);
-                updateInputBuffer(inputBuffer2, permutation2);
+                copyPermutation(inputBuffer1, permutation1);
+                copyPermutation(inputBuffer2, permutation2);
 
                 ImGui::End();
             }

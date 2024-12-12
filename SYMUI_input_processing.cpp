@@ -89,10 +89,10 @@ void shrinkPermutation(std::vector<int>& inputBuffer, std::vector<int>& permutat
     inputBuffer.resize(n - 1);
 }
 
-void updateInputBuffer(std::vector<int>& inputBuffer, std::vector<int>& permutation)
+void copyPermutation(std::vector<int>& destination, std::vector<int>& source)
 {
-    for (int i = 0; i < inputBuffer.size(); i++)
+    for (int i = 0; i < destination.size(); i++)
     {
-        inputBuffer[i] = permutation[i];
+        destination[i] = source[i];
     }
 }

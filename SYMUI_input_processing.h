@@ -14,4 +14,4 @@ void processPermutationInput(int i, std::vector<int>& inputBuffer, std::vector<i
 
 void shrinkPermutation(std::vector<int>& inputBuffer, std::vector<int>& permutation);
 
-void updateInputBuffer(std::vector<int>& inputBuffer, std::vector<int>& permutation);
+void copyPermutation(std::vector<int>& destination, std::vector<int>& source);
