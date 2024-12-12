@@ -9,3 +9,5 @@
 #include <vector>
 
 void SYM_compose_permutations(const std::vector<int>& permutation1, const std::vector<int>& permutation2, std::vector<int>& result);
+
+void SYM_commute_permutations(std::vector<int>& permutation1, std::vector<int>& permutation2);

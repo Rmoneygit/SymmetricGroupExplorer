@@ -178,6 +178,7 @@ int main(int, char**)
                 {
                     if (prevN < n)
                     {
+                        // Fill out the new cells with a default value
                         for (int i = prevN; i < n; i++)
                         {
                             inputBuffer1.push_back(i + 1);
@@ -189,6 +190,7 @@ int main(int, char**)
 
                     if (prevN > n)
                     {
+                        // If the permutation got smaller, there could be cells which contain values too large now.
                         for (int i = 0; i < prevN - n; i++)
                         {
                             shrinkPermutation(inputBuffer1, permutation1);
@@ -286,6 +288,11 @@ int main(int, char**)
                     SYM_compose_permutations(permutation1, permutation2, composition);
                 }
 
+                if (ImGui::Button("Commute"))
+                {
+                    SYM_commute_permutations(permutation1, permutation2);
+                }
+
                 if (ImGui::BeginTable("compositionTable", composition.size(), ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
                 {
                     for (int i = 0; i < composition.size(); i++)
@@ -307,6 +314,10 @@ int main(int, char**)
                     }
                     ImGui::EndTable();
                 }
+
+                updateInputBuffer(inputBuffer1, permutation1);
+                updateInputBuffer(inputBuffer2, permutation2);
+
                 ImGui::End();
             }
         }

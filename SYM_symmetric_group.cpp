@@ -16,3 +16,15 @@ void SYM_compose_permutations(const std::vector<int>& permutation1, const std::v
         result[i] = permutation1[permutation2[i] - 1];
     }
 }
+
+void SYM_commute_permutations(std::vector<int>& permutation1, std::vector<int>& permutation2)
+{
+    // Throw error if the permutations are different sizes
+
+    for (int i = 0; i < permutation1.size(); i++)
+    {
+        int temp = permutation1[i];
+        permutation1[i] = permutation2[i];
+        permutation2[i] = temp;
+    }
+}
