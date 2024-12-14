@@ -73,20 +73,18 @@ void processPermutationInput(int i, std::vector<int>& inputBuffer, std::vector<i
     }
 }
 
-void shrinkPermutation(std::vector<int>& inputBuffer, std::vector<int>& permutation)
+void shrinkPermutationByOne(std::vector<int>& permutation)
 {
-    int n = permutation.size();
+    int n = static_cast<int>(permutation.size());
     for (int i = 0; i < n; i++)
     {
         if (permutation[i] == n)
         {
             permutation[i] = permutation[n - 1];
-            inputBuffer[i] = inputBuffer[n - 1];
         }
     }
 
     permutation.resize(n - 1);
-    inputBuffer.resize(n - 1);
 }
 
 void copyPermutation(std::vector<int>& destination, std::vector<int>& source)

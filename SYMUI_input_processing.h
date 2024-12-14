@@ -12,6 +12,6 @@
 // If it passes the processing checks, it will be transferred to permutation (the third parameter)
 void processPermutationInput(int i, std::vector<int>& inputBuffer, std::vector<int>& permutation);
 
-void shrinkPermutation(std::vector<int>& inputBuffer, std::vector<int>& permutation);
+void shrinkPermutationByOne(std::vector<int>& permutation);
 
 void copyPermutation(std::vector<int>& destination, std::vector<int>& source);
