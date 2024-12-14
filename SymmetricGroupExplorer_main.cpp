@@ -72,7 +72,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 // Forward Delcarations
 void SYMUI_calculator_window(bool & showWindow);
 void SYMUI_order_window(bool& showWindow);
-void SYMUI_permutation_size_slider(int& n, PermutationVector& permVec);
+void SYMUI_permutation_size_slider(int& n, int& prevN, PermutationVector& permVec);
 
 // Main code
 int main(int, char**)
@@ -472,7 +472,7 @@ std::vector<int> initializePermutation(int size)
 
     for (int i = 0; i < size; i++)
     {
-        permutation.push_back(i);
+        permutation.push_back(i + 1);
     }
 
     return permutation;
@@ -481,6 +481,7 @@ std::vector<int> initializePermutation(int size)
 void SYMUI_calculator_window(bool &showWindow)
 {
     static int n = 3;
+    static int prevN = 3;
     static std::vector<int> inputBuffer1 = initializePermutation(n);
     static std::vector<int> inputBuffer2 = initializePermutation(n);
     static std::vector<int> permutation1 = initializePermutation(n);
@@ -490,7 +491,7 @@ void SYMUI_calculator_window(bool &showWindow)
 
     ImGui::Begin("Calculator", &showWindow);
 
-    SYMUI_permutation_size_slider(n, permVector);
+    SYMUI_permutation_size_slider(n, prevN, permVector);
 
     // This is a table consisting of two cells, each one containing a permutation. The permuations themselves are also tables.
     if (ImGui::BeginTable("fullTable", 2, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
@@ -577,7 +578,7 @@ void SYMUI_calculator_window(bool &showWindow)
 
     if (ImGui::Button("Calculate"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
     {
-        SYM_compose_permutations(permutation1, permutation2, composition);
+        composition = SYM_compose_permutations(permutation1, permutation2);
     }
 
     if (ImGui::Button("Commute"))
@@ -622,13 +623,15 @@ void SYMUI_calculator_window(bool &showWindow)
 void SYMUI_order_window(bool& showWindow)
 {
     static int n = 3;
+    static int prevN = 3;
     static std::vector<int> inputBuffer = initializePermutation(n);
     static std::vector<int> permutation = initializePermutation(n);
     static PermutationVector permVector = { &inputBuffer, &permutation };
+    static int order = 1;
     
     ImGui::Begin("Order", &showWindow);
 
-    SYMUI_permutation_size_slider(n, permVector);
+    SYMUI_permutation_size_slider(n, prevN, permVector);
 
     if (ImGui::BeginTable("orderPermutationTable", n, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
 
@@ -666,15 +669,32 @@ void SYMUI_order_window(bool& showWindow)
     }
     ImGui::EndTable();
 
+    if (ImGui::Button("Calculate Order"))
+    {
+        try
+        {
+            order = SYM_calculate_order(permutation);
+        }
+        catch (const std::invalid_argument& e) {
+            std::cerr << "Error: " << e.what() << std::endl;
+        }
+        catch (...) {
+            // Catch-all handler for any other exceptions
+            std::cerr << "An unexpected error occurred." << std::endl;
+        }
+
+    }
+
+    ImGui::Text("Order: %d", order);
+
     ImGui::End();
 }
 
-void SYMUI_permutation_size_slider(int& n, PermutationVector& permVec)
-{
-    static int prevN = 3;
-    
+void SYMUI_permutation_size_slider(int& n, int& prevN, PermutationVector& permVec)
+{    
     // The slider returns true if the value changed
-    if (ImGui::SliderInt("Symbols", &n, 1, 10))
+    std::string label = "Symbols";
+    if (ImGui::SliderInt(label.c_str(), &n, 1, 10))
     {
         if (prevN < n)
         {
