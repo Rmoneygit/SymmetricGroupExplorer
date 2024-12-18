@@ -73,6 +73,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 void SYMUI_calculator_window(bool & showWindow);
 void SYMUI_order_window(bool& showWindow);
 void SYMUI_permutation_size_slider(int& n, int& prevN, PermutationVector& permVec);
+void SYMUI_draw_arrow_between_points(ImVec2 source, ImVec2 dest, ImU32 color = IM_COL32_BLACK, float arrowSize = 10.0f, float lineThickness = 2.0f);
+ImRect SYMUI_get_table_cell_rect();
 
 // Main code
 int main(int, char**)
@@ -488,110 +490,108 @@ void SYMUI_calculator_window(bool &showWindow)
     static std::vector<int> permutation2 = initializePermutation(n);
     static std::vector<int> composition = initializePermutation(n);
     static PermutationVector permVector = { &inputBuffer1, &inputBuffer2, &permutation1, &permutation2, &composition };
+    std::vector<ImVec2> perm2InputPositions;
+    std::vector<ImVec2> perm1LabelPositions;
 
     ImGui::Begin("Calculator", &showWindow);
 
     SYMUI_permutation_size_slider(n, prevN, permVector);
 
-    // This is a table consisting of two cells, each one containing a permutation. The permuations themselves are also tables.
-    if (ImGui::BeginTable("fullTable", 2, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
+    if (ImGui::BeginTable("permutation2Table", n, ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
     {
-        ImGui::TableNextColumn();
-
-        if (ImGui::BeginTable("permutation1Table", n, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
+        for (int i = 0; i < n; i++)
         {
-            for (int i = 0; i < n; i++)
-            {
-                char label[32];
-                sprintf_s(label, "%d", i + 1);
-                ImGui::TableNextColumn();
-                ImGui::Text(label);
-            }
-
-            ImGui::TableNextRow();
-
-            for (int i = 0; i < n; i++)
-            {
-                ImGui::TableNextColumn();
-                // '##hidden' tells imgui to not show the label. But it still needs a unique label to internally identify the input object
-                std::string labelText = "##hidden Perm1Input " + std::to_string(i + 1);
-                const char* label = labelText.c_str();
-                // 0 step and 0 step_fast indicate "no plus or minus buttons".
-                if (ImGui::InputInt(label, &inputBuffer1[i], 0, 0))
-                {
-                    try
-                    {
-                        processPermutationInput(i, inputBuffer1, permutation1);
-                    }
-                    catch (const std::invalid_argument& e) {
-                        std::cerr << "Error: " << e.what() << std::endl;
-                    }
-                    catch (...) {
-                        // Catch-all handler for any other exceptions
-                        std::cerr << "An unexpected error occurred." << std::endl;
-                    }
-                }
-            }
-            ImGui::EndTable();
+            char label[32];
+            sprintf_s(label, "%d", i + 1);
+            ImGui::TableNextColumn();
+            ImGui::Text(label);
         }
 
-        ImGui::TableNextColumn();
+        ImGui::TableNextRow();
 
-        if (ImGui::BeginTable("permutation2Table", n, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
+        for (int i = 0; i < n; i++)
         {
-            for (int i = 0; i < n; i++)
-            {
-                char label[32];
-                sprintf_s(label, "%d", i + 1);
-                ImGui::TableNextColumn();
-                ImGui::Text(label);
-            }
-
-            ImGui::TableNextRow();
-
-            for (int i = 0; i < n; i++)
-            {
-                ImGui::TableNextColumn();
-                // '##hidden' tells imgui to not show the label. But it still needs a unique label to internally identify the input object
-                std::string labelText = "##hidden Perm2Input " + std::to_string(i + 1);
-                const char* label = labelText.c_str();
-                // 0 step and 0 step_fast indicate "no plus or minus buttons".
-                if (ImGui::InputInt(label, &inputBuffer2[i], 0, 0))
+            ImGui::TableNextColumn();
+            // '##hidden' tells imgui to not show the label. But it still needs a unique label to internally identify the input object
+            std::string labelText = "##hidden Perm2Input " + std::to_string(i + 1);
+            const char* label = labelText.c_str();
+            // 0 step and 0 step_fast indicate "no plus or minus buttons".
+            if (ImGui::InputInt(label, &inputBuffer2[i], 0, 0))
+            {   
+                try
                 {
-                    try
-                    {
-                        processPermutationInput(i, inputBuffer2, permutation2);
-                    }
-                    catch (const std::invalid_argument& e) {
-                        std::cerr << "Error: " << e.what() << std::endl;
-                    }
-                    catch (...) {
-                        // Catch-all handler for any other exceptions
-                        std::cerr << "An unexpected error occurred." << std::endl;
-                    }
+                    processPermutationInput(i, inputBuffer2, permutation2);
+                }
+                catch (const std::invalid_argument& e) {
+                    std::cerr << "Error: " << e.what() << std::endl;
+                }
+                catch (...) {
+                    // Catch-all handler for any other exceptions
+                    std::cerr << "An unexpected error occurred." << std::endl;
                 }
             }
-            ImGui::EndTable();
+
+            ImRect cellRect = SYMUI_get_table_cell_rect();
+            ImVec2 middleBottom = ImVec2((cellRect.Max.x + cellRect.Min.x) / 2, cellRect.Max.y);
+            perm2InputPositions.push_back(middleBottom);
         }
+
         ImGui::EndTable();
     }
 
-    if (ImGui::Button("Calculate"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+    ImGui::Spacing();
+    ImGui::Spacing();
+    ImGui::Spacing();
+    ImGui::Spacing();
+    ImGui::Spacing();
+    ImGui::Spacing();
+
+    if (ImGui::BeginTable("permutation1Table", n, ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
     {
-        composition = SYM_compose_permutations(permutation1, permutation2);
+        for (int i = 0; i < n; i++)
+        {
+            char label[32];
+            sprintf_s(label, "%d", i + 1);
+            ImGui::TableNextColumn();
+            ImGui::Text(label);
+            ImRect cellRect = SYMUI_get_table_cell_rect();
+            ImVec2 middleTop = ImVec2((cellRect.Max.x + cellRect.Min.x) / 2, cellRect.Min.y);
+            perm1LabelPositions.push_back(middleTop);
+        }
+
+        for (int i = 0; i < n; i++)
+        {
+            ImGui::TableNextColumn();
+            // '##hidden' tells imgui to not show the label. But it still needs a unique label to internally identify the input object
+            std::string labelText = "##hidden Perm1Input " + std::to_string(i + 1);
+            const char* label = labelText.c_str();
+            // 0 step and 0 step_fast indicate "no plus or minus buttons".
+            if (ImGui::InputInt(label, &inputBuffer1[i], 0, 0))
+            {
+                try
+                {
+                    processPermutationInput(i, inputBuffer1, permutation1);
+                }
+                catch (const std::invalid_argument& e) {
+                    std::cerr << "Error: " << e.what() << std::endl;
+                }
+                catch (...) {
+                    // Catch-all handler for any other exceptions
+                    std::cerr << "An unexpected error occurred." << std::endl;
+                }
+            }
+        }
+
+        ImGui::EndTable();
     }
 
-    if (ImGui::Button("Commute"))
+    for (int i = 0; i < n; i++)
     {
-        SYM_commute_permutations(permutation1, permutation2);
+        int val = permutation2[i];
+        SYMUI_draw_arrow_between_points(perm2InputPositions[i], perm1LabelPositions[val - 1], ImColor(255.0f, 0.0f, 0.0f));
     }
 
-    if (ImGui::Button("Use Output"))
-    {
-        copyPermutation(permutation1, composition);
-    }
-
-    if (ImGui::BeginTable("compositionTable", static_cast<int>(composition.size()), ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
+    if (ImGui::BeginTable("compositionTable", static_cast<int>(composition.size()), ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
     {
         for (int i = 0; i < composition.size(); i++)
         {
@@ -611,6 +611,21 @@ void SYMUI_calculator_window(bool &showWindow)
             ImGui::Text(label);
         }
         ImGui::EndTable();
+    }
+
+    if (ImGui::Button("Calculate"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+    {
+        composition = SYM_compose_permutations(permutation1, permutation2);
+    }
+
+    if (ImGui::Button("Commute"))
+    {
+        SYM_commute_permutations(permutation1, permutation2);
+    }
+
+    if (ImGui::Button("Use Output"))
+    {
+        copyPermutation(permutation1, composition);
     }
 
     // Need this if the "Use Output" button was clicked, in order to transfer values to the input fields
@@ -722,4 +737,34 @@ void SYMUI_permutation_size_slider(int& n, int& prevN, PermutationVector& permVe
 
         prevN = n;
     }
+}
+
+void SYMUI_draw_arrow_between_points(ImVec2 source, ImVec2 dest, ImU32 color, float arrowSize, float lineThickness)
+{
+    ImDrawList* drawList = ImGui::GetForegroundDrawList();
+
+    //ImVec2 direction = ImVec2(dest.x - source.x, dest.y - source.y);
+    //float length = sqrtf(direction.x * direction.x + direction.y * direction.y); // Distance formula
+
+    drawList->AddLine(source, dest, color, lineThickness);
+}
+
+ImRect SYMUI_get_table_cell_rect()
+{
+    ImGuiContext& g = *GImGui;
+    ImGuiTable* table = g.CurrentTable;
+    
+    if (!table) {
+        return ImRect(ImVec2(0, 0), ImVec2(0, 0));
+    }
+
+    int column = table->CurrentColumn;
+
+    float x1 = table->Columns[column].MinX;
+    float x2 = table->Columns[column].MaxX;
+
+    float y1 = table->RowPosY1;
+    float y2 = table->RowPosY2;
+
+    return ImRect(ImVec2(x1, y1), ImVec2(x2, y2));
 }
