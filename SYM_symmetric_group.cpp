@@ -6,20 +6,18 @@
 
 #include <vector>
 #include <stdexcept>
+
 #include "SYM_symmetric_group.h"
 
 int factorial(const int n)
 {    
-    if (n < 1)
-        throw std::invalid_argument("Input to factorial function must be a positive integer.");
-    
-    if (n == 1)
-        return 1;
-    
-    if (n == 2)
-        return 2;
+    int val = 1;
+    for (int i = 2; i <= n; i++)
+    {
+        val = val * i;
+    }
 
-    return factorial(n - 1) * factorial(n - 2);
+    return val;
 }
 
 std::vector<int> SYM_compose_permutations(const std::vector<int>& permutation1, const std::vector<int>& permutation2)
