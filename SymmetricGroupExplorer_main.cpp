@@ -583,15 +583,10 @@ void SYMUI_calculator_window(bool &showWindow)
 
     ERROR_PROTECT
 
-    if (dataChanged)
-    {
-        composition = SYM_compose_permutations(permutation1, permutation2);
-        dataChanged = false;
-    }
-
     if (ImGui::Button("Commute"))
     {
         SYM_commute_permutations(permutation1, permutation2);
+        dataChanged = true;
     }
 
     ImGui::SameLine(90);
@@ -600,10 +595,17 @@ void SYMUI_calculator_window(bool &showWindow)
     {
         // This transfers values to the internal data structure
         copyPermutation(permutation1, composition);
+        dataChanged = true;
+    }
 
+    if (dataChanged)
+    {
         // This transfers values to the input fields so the change is visible to the user
         copyPermutation(inputBuffer1, permutation1);
         copyPermutation(inputBuffer2, permutation2);
+        
+        composition = SYM_compose_permutations(permutation1, permutation2);
+        dataChanged = false;
     }
 
     ERROR_CATCH
