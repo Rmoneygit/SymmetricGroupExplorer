@@ -589,12 +589,27 @@ void SYMUI_calculator_window(bool &showWindow)
         dataChanged = true;
     }
 
-    ImGui::SameLine(90);
+    ImGui::SameLine(85);
 
     if (ImGui::Button("Use Output"))
     {
         // This transfers values to the internal data structure
         copyPermutation(permutation1, composition);
+        dataChanged = true;
+    }
+
+    ImGui::SameLine(180);
+
+    if (ImGui::Button("Reset"))
+    {
+        for (std::vector<int>* permutation : permVector)
+        {
+            n = 3;
+            prevN = 3;
+            permutation->resize(3);
+            SYM_set_to_identity(*permutation);
+        }
+
         dataChanged = true;
     }
 

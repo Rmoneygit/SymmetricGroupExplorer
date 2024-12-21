@@ -76,3 +76,11 @@ bool SYM_equals_identity(const std::vector<int>& permutation)
 
     return true;
 }
+
+void SYM_set_to_identity(std::vector<int>& permutation)
+{
+    for (int i = 0; i < permutation.size(); i++)
+    {
+        permutation[i] = i + 1;
+    }
+}

@@ -15,3 +15,5 @@ void SYM_commute_permutations(std::vector<int>& permutation1, std::vector<int>& 
 int SYM_calculate_order(const std::vector<int>& permutation);
 
 bool SYM_equals_identity(const std::vector<int>& permutation);
+
+void SYM_set_to_identity(std::vector<int>& permutation);
