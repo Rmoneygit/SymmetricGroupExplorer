@@ -22,6 +22,9 @@ int factorial(const int n)
 
 std::vector<int> SYM_compose_permutations(const std::vector<int>& permutation1, const std::vector<int>& permutation2)
 {
+    if (permutation1.size() != permutation2.size())
+        throw std::invalid_argument("Permutations provided should not have different sizes.");
+    
     std::vector<int> result(permutation1.size());
 
     for (int i = 0; i < permutation2.size(); i++)
@@ -34,7 +37,8 @@ std::vector<int> SYM_compose_permutations(const std::vector<int>& permutation1, 
 
 void SYM_commute_permutations(std::vector<int>& permutation1, std::vector<int>& permutation2)
 {
-    // Throw error if the permutations are different sizes
+    if(permutation1.size() != permutation2.size())
+        throw std::invalid_argument("Permutations provided should not have different sizes.");
 
     for (int i = 0; i < permutation1.size(); i++)
     {

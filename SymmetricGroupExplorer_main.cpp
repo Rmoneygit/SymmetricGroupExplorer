@@ -12,6 +12,7 @@
 #include <dxgi1_4.h>
 
 // Normal includes
+#include "error_types.h"
 #include "SYMUI_input_processing.h"
 #include "SYM_symmetric_group.h"
 
@@ -72,7 +73,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 // Forward Delcarations
 void SYMUI_calculator_window(bool & showWindow);
 void SYMUI_order_window(bool& showWindow);
-void SYMUI_permutation_size_slider(int& n, int& prevN, PermutationVector& permVec);
+bool SYMUI_permutation_size_slider(int& n, int& prevN, PermutationVector& permVec);
 void SYMUI_draw_arrow_between_points(ImVec2 source, ImVec2 dest, ImU32 color = IM_COL32_BLACK, float arrowSize = 10.0f, float lineThickness = 2.0f);
 ImRect SYMUI_get_table_cell_rect();
 
@@ -490,13 +491,15 @@ void SYMUI_calculator_window(bool &showWindow)
     static std::vector<int> permutation2 = initializePermutation(n);
     static std::vector<int> composition = initializePermutation(n);
     static PermutationVector permVector = { &inputBuffer1, &inputBuffer2, &permutation1, &permutation2, &composition };
+    static bool dataChanged = false;
     std::vector<ImVec2> perm2InputPositions;
     std::vector<ImVec2> perm1LabelPositions;
 
     ImGui::Begin("Calculator", &showWindow);
 
-    SYMUI_permutation_size_slider(n, prevN, permVector);
+    dataChanged = SYMUI_permutation_size_slider(n, prevN, permVector);
 
+    ImGui::Text("Permutation 2");
     if (ImGui::BeginTable("permutation2Table", n, ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
     {
         for (int i = 0; i < n; i++)
@@ -518,17 +521,10 @@ void SYMUI_calculator_window(bool &showWindow)
             // 0 step and 0 step_fast indicate "no plus or minus buttons".
             if (ImGui::InputInt(label, &inputBuffer2[i], 0, 0))
             {   
-                try
-                {
-                    processPermutationInput(i, inputBuffer2, permutation2);
-                }
-                catch (const std::invalid_argument& e) {
-                    std::cerr << "Error: " << e.what() << std::endl;
-                }
-                catch (...) {
-                    // Catch-all handler for any other exceptions
-                    std::cerr << "An unexpected error occurred." << std::endl;
-                }
+                ERROR_PROTECT
+                processPermutationInput(i, inputBuffer2, permutation2);
+                dataChanged = true;
+                ERROR_CATCH
             }
 
             ImRect cellRect = SYMUI_get_table_cell_rect();
@@ -543,9 +539,8 @@ void SYMUI_calculator_window(bool &showWindow)
     ImGui::Spacing();
     ImGui::Spacing();
     ImGui::Spacing();
-    ImGui::Spacing();
-    ImGui::Spacing();
 
+    ImGui::Text("Permutation 1");
     if (ImGui::BeginTable("permutation1Table", n, ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
     {
         for (int i = 0; i < n; i++)
@@ -568,29 +563,56 @@ void SYMUI_calculator_window(bool &showWindow)
             // 0 step and 0 step_fast indicate "no plus or minus buttons".
             if (ImGui::InputInt(label, &inputBuffer1[i], 0, 0))
             {
-                try
-                {
-                    processPermutationInput(i, inputBuffer1, permutation1);
-                }
-                catch (const std::invalid_argument& e) {
-                    std::cerr << "Error: " << e.what() << std::endl;
-                }
-                catch (...) {
-                    // Catch-all handler for any other exceptions
-                    std::cerr << "An unexpected error occurred." << std::endl;
-                }
+                ERROR_PROTECT
+                processPermutationInput(i, inputBuffer1, permutation1);
+                dataChanged = true;
+                ERROR_CATCH
             }
         }
 
         ImGui::EndTable();
     }
 
-    for (int i = 0; i < n; i++)
+    //for (int i = 0; i < n; i++)
+    //{
+    //    int val = permutation2[i];
+    //    SYMUI_draw_arrow_between_points(perm2InputPositions[i], perm1LabelPositions[val - 1], ImColor(255.0f, 0.0f, 0.0f));
+    //}
+
+    ImGui::Spacing();
+
+    ERROR_PROTECT
+
+    if (dataChanged)
     {
-        int val = permutation2[i];
-        SYMUI_draw_arrow_between_points(perm2InputPositions[i], perm1LabelPositions[val - 1], ImColor(255.0f, 0.0f, 0.0f));
+        composition = SYM_compose_permutations(permutation1, permutation2);
+        dataChanged = false;
     }
 
+    if (ImGui::Button("Commute"))
+    {
+        SYM_commute_permutations(permutation1, permutation2);
+    }
+
+    ImGui::SameLine(90);
+
+    if (ImGui::Button("Use Output"))
+    {
+        // This transfers values to the internal data structure
+        copyPermutation(permutation1, composition);
+
+        // This transfers values to the input fields so the change is visible to the user
+        copyPermutation(inputBuffer1, permutation1);
+        copyPermutation(inputBuffer2, permutation2);
+    }
+
+    ERROR_CATCH
+
+    ImGui::Spacing();
+    ImGui::Spacing();
+
+
+    ImGui::Text("Composition");
     if (ImGui::BeginTable("compositionTable", static_cast<int>(composition.size()), ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
     {
         for (int i = 0; i < composition.size(); i++)
@@ -612,25 +634,6 @@ void SYMUI_calculator_window(bool &showWindow)
         }
         ImGui::EndTable();
     }
-
-    if (ImGui::Button("Calculate"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-    {
-        composition = SYM_compose_permutations(permutation1, permutation2);
-    }
-
-    if (ImGui::Button("Commute"))
-    {
-        SYM_commute_permutations(permutation1, permutation2);
-    }
-
-    if (ImGui::Button("Use Output"))
-    {
-        copyPermutation(permutation1, composition);
-    }
-
-    // Need this if the "Use Output" button was clicked, in order to transfer values to the input fields
-    copyPermutation(inputBuffer1, permutation1);
-    copyPermutation(inputBuffer2, permutation2);
 
     ImGui::End();
 }
@@ -669,35 +672,18 @@ void SYMUI_order_window(bool& showWindow)
         // 0 step and 0 step_fast indicate "no plus or minus buttons".
         if (ImGui::InputInt(label, &inputBuffer[i], 0, 0))
         {
-            try
-            {
-                processPermutationInput(i, inputBuffer, permutation);
-            }
-            catch (const std::invalid_argument& e) {
-                std::cerr << "Error: " << e.what() << std::endl;
-            }
-            catch (...) {
-                // Catch-all handler for any other exceptions
-                std::cerr << "An unexpected error occurred." << std::endl;
-            }
+            ERROR_PROTECT
+            processPermutationInput(i, inputBuffer, permutation);
+            ERROR_CATCH
         }
     }
     ImGui::EndTable();
 
     if (ImGui::Button("Calculate Order"))
     {
-        try
-        {
-            order = SYM_calculate_order(permutation);
-        }
-        catch (const std::invalid_argument& e) {
-            std::cerr << "Error: " << e.what() << std::endl;
-        }
-        catch (...) {
-            // Catch-all handler for any other exceptions
-            std::cerr << "An unexpected error occurred." << std::endl;
-        }
-
+        ERROR_PROTECT
+        order = SYM_calculate_order(permutation);
+        ERROR_CATCH
     }
 
     ImGui::Text("Order: %d", order);
@@ -705,12 +691,16 @@ void SYMUI_order_window(bool& showWindow)
     ImGui::End();
 }
 
-void SYMUI_permutation_size_slider(int& n, int& prevN, PermutationVector& permVec)
+bool SYMUI_permutation_size_slider(int& n, int& prevN, PermutationVector& permVec)
 {    
+    bool dataChanged = false;
+    
     // The slider returns true if the value changed
     std::string label = "Symbols";
-    if (ImGui::SliderInt(label.c_str(), &n, 1, 10))
+    if (ImGui::SliderInt(label.c_str(), &n, 1, 20))
     {
+        dataChanged = true;
+        
         if (prevN < n)
         {
             // Fill out the new cells at the end of the permutations with a default value
@@ -737,6 +727,8 @@ void SYMUI_permutation_size_slider(int& n, int& prevN, PermutationVector& permVe
 
         prevN = n;
     }
+
+    return dataChanged;
 }
 
 void SYMUI_draw_arrow_between_points(ImVec2 source, ImVec2 dest, ImU32 color, float arrowSize, float lineThickness)
