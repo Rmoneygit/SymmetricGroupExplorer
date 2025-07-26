@@ -8,10 +8,13 @@
 
 #include <vector>
 
-// First parameter is the entry in the permutation which will change. The new value is in inputBuffer.
-// If it passes the processing checks, it will be transferred to permutation (the third parameter)
-void processPermutationInput(int i, std::vector<int>& inputBuffer, std::vector<int>& permutation);
+namespace SymUI
+{
+    // First parameter is the entry in the permutation which will change. The new value is in inputBuffer.
+    // If it passes the processing checks, it will be transferred to permutation (the third parameter)
+    void ProcessPermutationInput(int i, std::vector<int>& inputBuffer, std::vector<int>& permutation);
 
-void shrinkPermutationByOne(std::vector<int>& permutation);
+    void ShrinkPermutationByOne(std::vector<int>& permutation);
 
-void copyPermutation(std::vector<int>& destination, std::vector<int>& source);
+    void CopyPermutation(std::vector<int>& destination, std::vector<int>& source);
+}

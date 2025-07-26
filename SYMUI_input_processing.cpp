@@ -10,7 +10,7 @@
 #include <vector>
 #include <stdexcept>
 
-void processPermutationInput(int i, std::vector<int>& inputBuffer, std::vector<int>& permutation)
+void SymUI::ProcessPermutationInput(int i, std::vector<int>& inputBuffer, std::vector<int>& permutation)
 {
     if (inputBuffer.size() != permutation.size())
     {
@@ -73,7 +73,7 @@ void processPermutationInput(int i, std::vector<int>& inputBuffer, std::vector<i
     }
 }
 
-void shrinkPermutationByOne(std::vector<int>& permutation)
+void SymUI::ShrinkPermutationByOne(std::vector<int>& permutation)
 {
     int n = static_cast<int>(permutation.size());
     for (int i = 0; i < n; i++)
@@ -87,7 +87,7 @@ void shrinkPermutationByOne(std::vector<int>& permutation)
     permutation.resize(n - 1);
 }
 
-void copyPermutation(std::vector<int>& destination, std::vector<int>& source)
+void SymUI::CopyPermutation(std::vector<int>& destination, std::vector<int>& source)
 {
     for (int i = 0; i < destination.size(); i++)
     {

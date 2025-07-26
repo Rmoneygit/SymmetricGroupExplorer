@@ -4,28 +4,33 @@ project(SymmetricGroupExplorer)
 
 find_package(imgui CONFIG REQUIRED)
 
+# Set the specific ImGui version to use
+set(IMGUI_VERSION_TAG "v1.91.9")
+
 # Specify where to download backend files (e.g., ${CMAKE_BINARY_DIR}/imgui_backends)
 set(IMGUI_BACKENDS_DIR ${CMAKE_BINARY_DIR}/imgui_backends)
 
-# Download Win32 backend
-file(DOWNLOAD
-    https://raw.githubusercontent.com/ocornut/imgui/master/backends/imgui_impl_win32.cpp
-    ${IMGUI_BACKENDS_DIR}/imgui_impl_win32.cpp
-)
-file(DOWNLOAD
-    https://raw.githubusercontent.com/ocornut/imgui/master/backends/imgui_impl_win32.h
-    ${IMGUI_BACKENDS_DIR}/imgui_impl_win32.h
-)
+file(MAKE_DIRECTORY ${IMGUI_BACKENDS_DIR})
 
-# Download DirectX 11 backend
-file(DOWNLOAD
-    https://raw.githubusercontent.com/ocornut/imgui/master/backends/imgui_impl_dx12.cpp
-    ${IMGUI_BACKENDS_DIR}/imgui_impl_dx12.cpp
-)
-file(DOWNLOAD
-    https://raw.githubusercontent.com/ocornut/imgui/master/backends/imgui_impl_dx12.h
-    ${IMGUI_BACKENDS_DIR}/imgui_impl_dx12.h
-)
+# Helper macro to download if file is missing
+macro(download_imgui_backend_file filename)
+    set(url "https://raw.githubusercontent.com/ocornut/imgui/${IMGUI_VERSION_TAG}/backends/${filename}")
+    set(dest "${IMGUI_BACKENDS_DIR}/${filename}")
+    if(NOT EXISTS ${dest})
+        message(STATUS "Downloading ImGui backend file: ${filename}")
+        file(DOWNLOAD ${url} ${dest} SHOW_PROGRESS STATUS status LOG log)
+        list(GET status 0 status_code)
+        if(NOT status_code EQUAL 0)
+            message(FATAL_ERROR "Failed to download ${filename}: ${log}")
+        endif()
+    endif()
+endmacro()
+
+# Download required backend files
+download_imgui_backend_file("imgui_impl_win32.cpp")
+download_imgui_backend_file("imgui_impl_win32.h")
+download_imgui_backend_file("imgui_impl_dx12.cpp")
+download_imgui_backend_file("imgui_impl_dx12.h")
 
 # Add the executable, including the backend files
 add_executable(SymmetricGroupExplorer "SymmetricGroupExplorer_main.cpp"

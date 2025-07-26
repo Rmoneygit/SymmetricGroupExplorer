@@ -1,6 +1,9 @@
 {
   "dependencies": [
-    "imgui",
+    {
+      "name": "imgui",
+      "version>=": "1.91.9"
+    },
     "vcpkg-cmake-config",
     "vcpkg-cmake"
   ]
