@@ -4,13 +4,14 @@
     Purpose: Implementations of routines for processing user input
  */
 
+#include "SYM_data_types.h"
 #include "SYMUI_input_processing.h"
 
 #include <cassert>
 #include <vector>
 #include <stdexcept>
 
-void SymUI::ProcessPermutationInput(int i, std::vector<int>& inputBuffer, std::vector<int>& permutation)
+void SymUI::ProcessPermutationInput(int i, Sym::Permutation& inputBuffer, Sym::Permutation& permutation)
 {
     if (inputBuffer.size() != permutation.size())
     {
@@ -73,7 +74,7 @@ void SymUI::ProcessPermutationInput(int i, std::vector<int>& inputBuffer, std::v
     }
 }
 
-void SymUI::ShrinkPermutationByOne(std::vector<int>& permutation)
+void SymUI::ShrinkPermutationByOne(Sym::Permutation& permutation)
 {
     int n = static_cast<int>(permutation.size());
     for (int i = 0; i < n; i++)
@@ -87,10 +88,22 @@ void SymUI::ShrinkPermutationByOne(std::vector<int>& permutation)
     permutation.resize(n - 1);
 }
 
-void SymUI::CopyPermutation(std::vector<int>& destination, std::vector<int>& source)
+void SymUI::CopyPermutation(Sym::Permutation& destination, Sym::Permutation& source)
 {
     for (int i = 0; i < destination.size(); i++)
     {
         destination[i] = source[i];
     }
+}
+
+Sym::Permutation SymUI::InitializePermutation(int size)
+{
+    Sym::Permutation permutation;
+
+    for (int i = 0; i < size; i++)
+    {
+        permutation.push_back(i + 1);
+    }
+
+    return permutation;
 }

@@ -8,12 +8,15 @@
 
 #include <vector>
 
-std::vector<int> SYM_compose_permutations(const std::vector<int>& permutation1, const std::vector<int>& permutation2);
+namespace Sym
+{
+    std::vector<int> ComposePermutations(const std::vector<int>& permutation1, const std::vector<int>& permutation2);
 
-void SYM_commute_permutations(std::vector<int>& permutation1, std::vector<int>& permutation2);
+    void CommutePermutations(std::vector<int>& permutation1, std::vector<int>& permutation2);
 
-int SYM_calculate_order(const std::vector<int>& permutation);
+    int CalculateOrder(const std::vector<int>& permutation);
 
-bool SYM_equals_identity(const std::vector<int>& permutation);
+    bool EqualsIdentity(const std::vector<int>& permutation);
 
-void SYM_set_to_identity(std::vector<int>& permutation);
+    void SetToIdentity(std::vector<int>& permutation);
+}

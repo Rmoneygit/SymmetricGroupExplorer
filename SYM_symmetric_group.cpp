@@ -20,7 +20,7 @@ int factorial(const int n)
     return val;
 }
 
-std::vector<int> SYM_compose_permutations(const std::vector<int>& permutation1, const std::vector<int>& permutation2)
+std::vector<int> Sym::ComposePermutations(const std::vector<int>& permutation1, const std::vector<int>& permutation2)
 {
     if (permutation1.size() != permutation2.size())
         throw std::invalid_argument("Permutations provided should not have different sizes.");
@@ -35,7 +35,7 @@ std::vector<int> SYM_compose_permutations(const std::vector<int>& permutation1, 
     return result;
 }
 
-void SYM_commute_permutations(std::vector<int>& permutation1, std::vector<int>& permutation2)
+void Sym::CommutePermutations(std::vector<int>& permutation1, std::vector<int>& permutation2)
 {
     if(permutation1.size() != permutation2.size())
         throw std::invalid_argument("Permutations provided should not have different sizes.");
@@ -48,14 +48,14 @@ void SYM_commute_permutations(std::vector<int>& permutation1, std::vector<int>& 
     }
 }
 
-int SYM_calculate_order(const std::vector<int>& permutation)
+int Sym::CalculateOrder(const std::vector<int>& permutation)
 {
     std::vector<int> buffer = permutation;
     int order = 1;
     const int max_possible = factorial(permutation.size());
-    while (!SYM_equals_identity(buffer))
+    while (!Sym::EqualsIdentity(buffer))
     {
-        buffer = SYM_compose_permutations(buffer, permutation);
+        buffer = Sym::ComposePermutations(buffer, permutation);
 
         order++;
 
@@ -66,7 +66,7 @@ int SYM_calculate_order(const std::vector<int>& permutation)
     return order;
 }
 
-bool SYM_equals_identity(const std::vector<int>& permutation)
+bool Sym::EqualsIdentity(const std::vector<int>& permutation)
 {
     for (int i = 0; i < permutation.size(); i++)
     {
@@ -77,7 +77,7 @@ bool SYM_equals_identity(const std::vector<int>& permutation)
     return true;
 }
 
-void SYM_set_to_identity(std::vector<int>& permutation)
+void Sym::SetToIdentity(std::vector<int>& permutation)
 {
     for (int i = 0; i < permutation.size(); i++)
     {
