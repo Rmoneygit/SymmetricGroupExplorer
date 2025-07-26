@@ -18,6 +18,35 @@
 #include <string>
 #include <vector>
 
+void SymUI::MainWindow()
+{
+    static bool showCalculator = false;
+    static bool showOrder = false;
+
+    if (ImGui::BeginMainMenuBar())
+    {
+        if (ImGui::MenuItem("Calculator"))
+        {
+            showCalculator = true;
+        }
+        if (ImGui::MenuItem("Order"))
+        {
+            showOrder = true;
+        }
+        ImGui::EndMainMenuBar();
+    }
+
+    if (showCalculator)
+    {
+        SymUI::CalculatorWindow(showCalculator);
+    }
+
+    if (showOrder)
+    {
+        SymUI::OrderWindow(showOrder);
+    }
+}
+
 void SymUI::CalculatorWindow(bool& showWindow)
 {
     static int n = 3;

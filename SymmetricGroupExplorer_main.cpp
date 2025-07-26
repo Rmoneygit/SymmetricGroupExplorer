@@ -12,10 +12,7 @@
 #include <dxgi1_4.h>
 
 // Normal includes
-#include "error_types.h"
-#include "SYMUI_input_processing.h"
 #include "SYMUI_windows.h"
-#include "SYM_symmetric_group.h"
 
 // Standard C++ library includes
 #include <iostream>
@@ -199,33 +196,8 @@ int main(int, char**)
         ImGui_ImplWin32_NewFrame();
         ImGui::NewFrame();
 
-        {   
-            static bool showCalculator = false;
-            static bool showOrder = false;
-            
-            if (ImGui::BeginMainMenuBar())
-            {
-                if (ImGui::MenuItem("Calculator"))
-                {
-                    showCalculator = true;
-                }
-                if (ImGui::MenuItem("Order"))
-                {
-                    showOrder = true;
-                }
-                ImGui::EndMainMenuBar();
-            }
-            
-            if (showCalculator)
-            {
-                SymUI::CalculatorWindow(showCalculator);
-            }
-
-            if (showOrder)
-            {
-                SymUI::OrderWindow(showOrder);
-            }
-        }
+        // Basically all of the actual program itself will be invoked somewhere under this method
+        SymUI::MainWindow();
 
         // Rendering
         ImGui::Render();
