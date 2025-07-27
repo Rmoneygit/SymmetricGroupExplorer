@@ -36,10 +36,12 @@ download_imgui_backend_file("imgui_impl_dx12.h")
 # Add the executable, including the backend files
 add_executable(SymmetricGroupExplorer "SymmetricGroupExplorer_main.cpp"
                   ${IMGUI_BACKENDS_DIR}/imgui_impl_win32.cpp
-                  ${IMGUI_BACKENDS_DIR}/imgui_impl_dx12.cpp  
-                  "SYMUI_input_processing.cpp" 
+                  ${IMGUI_BACKENDS_DIR}/imgui_impl_dx12.cpp
+                  "SYM_errors.cpp"
                   "SYM_symmetric_group.cpp"
+                  "SYMUI_input_processing.cpp" 
                   "SYMUI_windows.cpp"
+                  "SYMUI_error_presentation.cpp"
               )
 
 target_link_libraries(SymmetricGroupExplorer PRIVATE imgui::imgui cpptrace::cpptrace)

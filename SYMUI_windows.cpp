@@ -13,8 +13,10 @@
 #include <cpptrace/from_current_macros.hpp>
 
 #include "SYM_data_types.h"
+#include "SYM_errors.h"
 #include "SYM_symmetric_group.h"
 #include "SYMUI_data_types.h"
+#include "SYMUI_error_presentation.h"
 #include "SYMUI_input_processing.h"
 #include "SYMUI_windows.h"
 
@@ -48,8 +50,9 @@ void SymUI::MainWindow()
         }
         CPPTRACE_CATCH(const std::exception & e)
         {
-            std::cerr << "Unhandled exception encountered in CalculatorWindow: " << e.what() << std::endl;
-            cpptrace::from_current_exception().print();
+            std::string errorMsg = "Unhandled exception encountered in CalculatorWindow: ";
+            Sym::PrintErrorToStdErrorStream(e, errorMsg);
+            SymUI::ShowErrorPopup(e, errorMsg);
         }
     }
 
@@ -61,8 +64,9 @@ void SymUI::MainWindow()
         }
         CPPTRACE_CATCH(const std::exception & e)
         {
-            std::cerr << "Unhandled exception encountered in OrderWindow: " << e.what() << std::endl;
-            cpptrace::from_current_exception().print();
+            std::string errorMsg = "Unhandled exception encountered in OrderWindow: ";
+            Sym::PrintErrorToStdErrorStream(e, errorMsg);
+            SymUI::ShowErrorPopup(e, errorMsg);
         }
     }
 }
@@ -130,8 +134,9 @@ void SymUI::CalculatorWindow(bool& showWindow)
                     }
                     CPPTRACE_CATCH(const std::exception& e)
                     {
-                        std::cerr << "Exception encountered while processing permutation input: " << e.what() << std::endl;
-                        cpptrace::from_current_exception().print();
+                        std::string errorMsg = "Exception encountered while processing permutation input: ";
+                        Sym::PrintErrorToStdErrorStream(e, errorMsg);
+                        SymUI::ShowErrorPopup(e, errorMsg);
                     }
                 }
 
@@ -178,8 +183,9 @@ void SymUI::CalculatorWindow(bool& showWindow)
                     }
                     CPPTRACE_CATCH(const std::exception & e)
                     {
-                        std::cerr << "Exception encountered while processing permutation input: " << e.what() << std::endl;
-                        cpptrace::from_current_exception().print();
+                        std::string errorMsg = "Exception encountered while processing permutation input: ";
+                        Sym::PrintErrorToStdErrorStream(e, errorMsg);
+                        SymUI::ShowErrorPopup(e, errorMsg);
                     }
                 }
             }
@@ -219,8 +225,9 @@ void SymUI::CalculatorWindow(bool& showWindow)
         }
         CPPTRACE_CATCH(const std::exception& e)
         {
-            std::cerr << "Exception encountered while executing \"Commute\" command: " << e.what() << std::endl;
-            cpptrace::from_current_exception().print();
+            std::string errorMsg = "Exception encountered while executing \"Commute\" command: ";
+            Sym::PrintErrorToStdErrorStream(e, errorMsg);
+            SymUI::ShowErrorPopup(e, errorMsg);
         }
     }
 
@@ -236,8 +243,9 @@ void SymUI::CalculatorWindow(bool& showWindow)
         }
         CPPTRACE_CATCH(const std::exception& e)
         {
-            std::cerr << "Exception encountered while executing \"Use Output\" command: " << e.what() << std::endl;
-            cpptrace::from_current_exception().print();
+            std::string errorMsg = "Exception encountered while executing \"Use Output\" command: ";
+            Sym::PrintErrorToStdErrorStream(e, errorMsg);
+            SymUI::ShowErrorPopup(e, errorMsg);
         }
     }
 
@@ -258,8 +266,9 @@ void SymUI::CalculatorWindow(bool& showWindow)
         }
         CPPTRACE_CATCH(const std::exception& e)
         {
-            std::cerr << "Exception encountered while executing \"Reset\" command: " << e.what() << std::endl;
-            cpptrace::from_current_exception().print();
+            std::string errorMsg = "Exception encountered while executing \"Reset\" command: ";
+            Sym::PrintErrorToStdErrorStream(e, errorMsg);
+            SymUI::ShowErrorPopup(e, errorMsg);
         }
     }
 
@@ -276,8 +285,9 @@ void SymUI::CalculatorWindow(bool& showWindow)
         }
         CPPTRACE_CATCH(const std::exception& e)
         {
-            std::cerr << "Exception encountered while trying to update internal data model: " << e.what() << std::endl;
-            cpptrace::from_current_exception().print();
+            std::string errorMsg = "Exception encountered while trying to update internal data model: ";
+            Sym::PrintErrorToStdErrorStream(e, errorMsg);
+            SymUI::ShowErrorPopup(e, errorMsg);
         }
     }
 
@@ -350,8 +360,9 @@ void SymUI::OrderWindow(bool& showWindow)
                 }
                 CPPTRACE_CATCH(const std::exception & e)
                 {
-                    std::cerr << "Exception encountered while processing permutation input: " << e.what() << std::endl;
-                    cpptrace::from_current_exception().print();
+                    std::string errorMsg = "Exception encountered while processing permutation input: ";
+                    Sym::PrintErrorToStdErrorStream(e, errorMsg);
+                    SymUI::ShowErrorPopup(e, errorMsg);
                 }
             }
         }
@@ -366,8 +377,9 @@ void SymUI::OrderWindow(bool& showWindow)
         }
         CPPTRACE_CATCH(const std::exception & e)
         {
-            std::cerr << "Exception encountered while executing command \"Calculate Order\": " << e.what() << std::endl;
-            cpptrace::from_current_exception().print();
+            std::string errorMsg = "Exception encountered while executing command \"Calculate Order\": ";
+            Sym::PrintErrorToStdErrorStream(e, errorMsg);
+            SymUI::ShowErrorPopup(e, errorMsg);
         }
     }
 
