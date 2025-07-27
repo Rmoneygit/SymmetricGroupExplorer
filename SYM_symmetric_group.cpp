@@ -9,15 +9,18 @@
 
 #include "SYM_symmetric_group.h"
 
-int factorial(const int n)
-{    
-    int val = 1;
-    for (int i = 2; i <= n; i++)
+namespace
+{
+    int factorial(const int n)
     {
-        val = val * i;
-    }
+        int val = 1;
+        for (int i = 2; i <= n; i++)
+        {
+            val = val * i;
+        }
 
-    return val;
+        return val;
+    }
 }
 
 std::vector<int> Sym::ComposePermutations(const std::vector<int>& permutation1, const std::vector<int>& permutation2)

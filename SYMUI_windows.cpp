@@ -8,13 +8,17 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 
-#include "error_types.h"
+// CppTrace 3rd-party library includes
+#include <cpptrace/from_current.hpp>
+#include <cpptrace/from_current_macros.hpp>
+
 #include "SYM_data_types.h"
 #include "SYM_symmetric_group.h"
 #include "SYMUI_data_types.h"
 #include "SYMUI_input_processing.h"
 #include "SYMUI_windows.h"
 
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -38,12 +42,28 @@ void SymUI::MainWindow()
 
     if (showCalculator)
     {
-        SymUI::CalculatorWindow(showCalculator);
+        CPPTRACE_TRY
+        {
+            SymUI::CalculatorWindow(showCalculator);
+        }
+        CPPTRACE_CATCH(const std::exception & e)
+        {
+            std::cerr << "Unhandled exception encountered in CalculatorWindow: " << e.what() << std::endl;
+            cpptrace::from_current_exception().print();
+        }
     }
 
     if (showOrder)
     {
-        SymUI::OrderWindow(showOrder);
+        CPPTRACE_TRY
+        {
+            SymUI::OrderWindow(showOrder);
+        }
+        CPPTRACE_CATCH(const std::exception & e)
+        {
+            std::cerr << "Unhandled exception encountered in OrderWindow: " << e.what() << std::endl;
+            cpptrace::from_current_exception().print();
+        }
     }
 }
 
@@ -103,10 +123,16 @@ void SymUI::CalculatorWindow(bool& showWindow)
                 // 0 step and 0 step_fast indicate "no plus or minus buttons".
                 if (ImGui::InputInt(label, &inputBuffer2[i], 0, 0))
                 {
-                    ERROR_PROTECT
+                    CPPTRACE_TRY
+                    {
                         SymUI::ProcessPermutationInput(i, inputBuffer2, permutation2);
-                    dataChanged = true;
-                    ERROR_CATCH
+                        dataChanged = true;
+                    }
+                    CPPTRACE_CATCH(const std::exception& e)
+                    {
+                        std::cerr << "Exception encountered while processing permutation input: " << e.what() << std::endl;
+                        cpptrace::from_current_exception().print();
+                    }
                 }
 
                 ImRect cellRect = SymUI::GetTableCellRect();
@@ -145,10 +171,16 @@ void SymUI::CalculatorWindow(bool& showWindow)
                 // 0 step and 0 step_fast indicate "no plus or minus buttons".
                 if (ImGui::InputInt(label, &inputBuffer1[i], 0, 0))
                 {
-                    ERROR_PROTECT
+                    CPPTRACE_TRY
+                    {
                         SymUI::ProcessPermutationInput(i, inputBuffer1, permutation1);
-                    dataChanged = true;
-                    ERROR_CATCH
+                        dataChanged = true;
+                    }
+                    CPPTRACE_CATCH(const std::exception & e)
+                    {
+                        std::cerr << "Exception encountered while processing permutation input: " << e.what() << std::endl;
+                        cpptrace::from_current_exception().print();
+                    }
                 }
             }
 
@@ -178,53 +210,79 @@ void SymUI::CalculatorWindow(bool& showWindow)
 
     ImGui::Spacing();
 
-    ERROR_PROTECT
-
-        if (ImGui::Button("Commute"))
+    if (ImGui::Button("Commute"))
+    {
+        CPPTRACE_TRY
         {
             Sym::CommutePermutations(permutation1, permutation2);
             dataChanged = true;
         }
+        CPPTRACE_CATCH(const std::exception& e)
+        {
+            std::cerr << "Exception encountered while executing \"Commute\" command: " << e.what() << std::endl;
+            cpptrace::from_current_exception().print();
+        }
+    }
 
     ImGui::SameLine(85);
 
     if (ImGui::Button("Use Output"))
     {
-        // This transfers values to the internal data structure
-        SymUI::CopyPermutation(permutation1, composition);
-        dataChanged = true;
+        CPPTRACE_TRY
+        {
+            // This transfers values to the internal data structure
+            SymUI::CopyPermutation(permutation1, composition);
+            dataChanged = true;
+        }
+        CPPTRACE_CATCH(const std::exception& e)
+        {
+            std::cerr << "Exception encountered while executing \"Use Output\" command: " << e.what() << std::endl;
+            cpptrace::from_current_exception().print();
+        }
     }
 
     ImGui::SameLine(180);
 
     if (ImGui::Button("Reset"))
     {
-        for (Sym::Permutation* permutation : permVector)
+        CPPTRACE_TRY
         {
-            n = 3;
-            prevN = 3;
-            permutation->resize(3);
-            Sym::SetToIdentity(*permutation);
+            for (Sym::Permutation* permutation : permVector)
+            {
+                n = 3;
+                prevN = 3;
+                permutation->resize(3);
+                Sym::SetToIdentity(*permutation);
+            }
+            dataChanged = true;
         }
-
-        dataChanged = true;
+        CPPTRACE_CATCH(const std::exception& e)
+        {
+            std::cerr << "Exception encountered while executing \"Reset\" command: " << e.what() << std::endl;
+            cpptrace::from_current_exception().print();
+        }
     }
 
     if (dataChanged)
     {
-        // This transfers values to the input fields so the change is visible to the user
-        SymUI::CopyPermutation(inputBuffer1, permutation1);
-        SymUI::CopyPermutation(inputBuffer2, permutation2);
+        CPPTRACE_TRY
+        {
+            // This transfers values to the input fields so the change is visible to the user
+            SymUI::CopyPermutation(inputBuffer1, permutation1);
+            SymUI::CopyPermutation(inputBuffer2, permutation2);
 
-        composition = Sym::ComposePermutations(permutation1, permutation2);
-        dataChanged = false;
+            composition = Sym::ComposePermutations(permutation1, permutation2);
+            dataChanged = false;
+        }
+        CPPTRACE_CATCH(const std::exception& e)
+        {
+            std::cerr << "Exception encountered while trying to update internal data model: " << e.what() << std::endl;
+            cpptrace::from_current_exception().print();
+        }
     }
 
-    ERROR_CATCH
-
-        ImGui::Spacing();
     ImGui::Spacing();
-
+    ImGui::Spacing();
 
     ImGui::Text("Composition");
     if (ImGui::BeginTable("compositionTable", static_cast<int>(composition.size()), ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
@@ -266,7 +324,7 @@ void SymUI::OrderWindow(bool& showWindow)
     PermutationSizeSlider(n, prevN, permVector);
 
     if (ImGui::BeginTable("orderPermutationTable", n, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
-
+    {
         for (int i = 0; i < n; i++)
         {
             char label[32];
@@ -275,29 +333,42 @@ void SymUI::OrderWindow(bool& showWindow)
             ImGui::Text(label);
         }
 
-    ImGui::TableNextRow();
+        ImGui::TableNextRow();
 
-    for (int i = 0; i < n; i++)
-    {
-        ImGui::TableNextColumn();
-        // '##hidden' tells imgui to not show the label. But it still needs a unique label to internally identify the input object
-        std::string labelText = "##hidden OrderPermInput " + std::to_string(i + 1);
-        const char* label = labelText.c_str();
-        // 0 step and 0 step_fast indicate "no plus or minus buttons".
-        if (ImGui::InputInt(label, &inputBuffer[i], 0, 0))
+        for (int i = 0; i < n; i++)
         {
-            ERROR_PROTECT
-                ProcessPermutationInput(i, inputBuffer, permutation);
-            ERROR_CATCH
+            ImGui::TableNextColumn();
+            // '##hidden' tells imgui to not show the label. But it still needs a unique label to internally identify the input object
+            std::string labelText = "##hidden OrderPermInput " + std::to_string(i + 1);
+            const char* label = labelText.c_str();
+            // 0 step and 0 step_fast indicate "no plus or minus buttons".
+            if (ImGui::InputInt(label, &inputBuffer[i], 0, 0))
+            {
+                CPPTRACE_TRY
+                {
+                    ProcessPermutationInput(i, inputBuffer, permutation);
+                }
+                CPPTRACE_CATCH(const std::exception & e)
+                {
+                    std::cerr << "Exception encountered while processing permutation input: " << e.what() << std::endl;
+                    cpptrace::from_current_exception().print();
+                }
+            }
         }
     }
     ImGui::EndTable();
 
     if (ImGui::Button("Calculate Order"))
     {
-        ERROR_PROTECT
+        CPPTRACE_TRY
+        {
             order = Sym::CalculateOrder(permutation);
-        ERROR_CATCH
+        }
+        CPPTRACE_CATCH(const std::exception & e)
+        {
+            std::cerr << "Exception encountered while executing command \"Calculate Order\": " << e.what() << std::endl;
+            cpptrace::from_current_exception().print();
+        }
     }
 
     ImGui::Text("Order: %d", order);

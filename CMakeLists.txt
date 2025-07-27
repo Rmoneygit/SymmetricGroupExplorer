@@ -3,6 +3,7 @@
 project(SymmetricGroupExplorer)
 
 find_package(imgui CONFIG REQUIRED)
+find_package(cpptrace CONFIG REQUIRED)
 
 # Set the specific ImGui version to use
 set(IMGUI_VERSION_TAG "v1.91.9")
@@ -41,7 +42,7 @@ add_executable(SymmetricGroupExplorer "SymmetricGroupExplorer_main.cpp"
                   "SYMUI_windows.cpp"
               )
 
-target_link_libraries(SymmetricGroupExplorer PRIVATE imgui::imgui)
+target_link_libraries(SymmetricGroupExplorer PRIVATE imgui::imgui cpptrace::cpptrace)
 
 # Add include directories for ImGui backends
 target_include_directories(SymmetricGroupExplorer PRIVATE
@@ -53,3 +54,13 @@ target_link_libraries(SymmetricGroupExplorer PRIVATE d3d12 dxgi dxguid)
 
 message("CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
 
+# Copy the cpptrace.dll on windows to the same directory as the executable for your_target.
+# Not required if static linking.
+if(WIN32)
+  add_custom_command(
+    TARGET SymmetricGroupExplorer POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    $<TARGET_FILE:cpptrace::cpptrace>
+    $<TARGET_FILE_DIR:SymmetricGroupExplorer>
+  )
+endif()
