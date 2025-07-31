@@ -1,6 +1,6 @@
 /*
     Author: Ryan Patrick
-    Timestamp: Jul-26-2025
+    Timestamp: 26-Jul-2025
     Purpose: Definitions of routines for constructing and controlling windows
  */
 
@@ -12,14 +12,16 @@
 #include <cpptrace/from_current.hpp>
 #include <cpptrace/from_current_macros.hpp>
 
-#include "SYM_data_types.h"
-#include "SYM_errors.h"
-#include "SYM_symmetric_group.h"
-#include "SYMUI_data_types.h"
-#include "SYMUI_error_presentation.h"
-#include "SYMUI_input_processing.h"
-#include "SYMUI_windows.h"
+// Normal includes
+#include "Sym_data_types.h"
+#include "Sym_errors.h"
+#include "Sym_symmetric_group.h"
+#include "SymUI_data_types.h"
+#include "SymUI_error_presentation.h"
+#include "SymUI_input_processing.h"
+#include "SymUI_windows.h"
 
+// Standard library includes
 #include <iostream>
 #include <string>
 #include <vector>

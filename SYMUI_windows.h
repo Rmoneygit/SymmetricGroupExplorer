@@ -9,7 +9,7 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 
-#include "SYM_data_types.h"
+#include "Sym_data_types.h"
 
 namespace SymUI
 {

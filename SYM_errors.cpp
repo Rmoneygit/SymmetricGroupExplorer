@@ -10,7 +10,7 @@
 #include <cpptrace/from_current.hpp>
 
 // Normal includes
-#include "SYM_errors.h"
+#include "Sym_errors.h"
 
 // Standard library includes
 #include <exception>

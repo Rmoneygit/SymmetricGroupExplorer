@@ -11,6 +11,6 @@
 
 namespace SymUI
 {
-    // Displays] a Windows popup to the user indicating an error has occurred.
-    void ShowErrorPopup(const std::exception& e, const const std::string message);
+    // Displays a Windows popup to the user indicating an error has occurred.
+    void ShowErrorPopup(const std::exception& e, const std::string message);
 }
