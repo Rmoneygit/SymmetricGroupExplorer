@@ -199,14 +199,10 @@ void SymUI::CalculatorWindow(bool& showWindow)
     else if (inputMode == CYCLE)
     {
         ImGui::Text("Permutation 1");
-        char* rawCycleInput = new char[30];
+        static char rawCycleInput[30] = "(1 2 3)";
         if (ImGui::InputText("Permutation1 Cycle Input", rawCycleInput, 30))
         {
-            int i = 0;
-            while (rawCycleInput[i] != '\0');
-            {
-                i++;
-            }
+            SymUI::ProcessCycleNotationInput(rawCycleInput);
         }
     }
 
