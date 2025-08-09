@@ -274,5 +274,20 @@ Sym::Permutation SymUI::ProcessCycleNotationInput(const char* cycleInput)
     
     std::cout << "ProcessCycleNotationInput end\n";
     
+    if (tokens.size() == 0)
+    {
+        throw std::exception("No tokens recognized in input.\n");
+    }
+
+    // Assumption is that the lexer immediately returns upon encountering an invalid token,
+    // so it will be the last one in the list.
+    SymUI::Token finalToken = tokens[tokens.size() - 1];
+    if (finalToken.GetType() == "Invalid")
+    {
+        std::string errorMsg = "Invalid token encountered: " + finalToken.GetValue();
+        throw std::exception(errorMsg.c_str());
+    }
+
+
     return Sym::Permutation();
 }

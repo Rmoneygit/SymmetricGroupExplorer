@@ -199,10 +199,36 @@ void SymUI::CalculatorWindow(bool& showWindow)
     else if (inputMode == CYCLE)
     {
         ImGui::Text("Permutation 1");
-        static char rawCycleInput[30] = "(1 2 3)";
-        if (ImGui::InputText("Permutation1 Cycle Input", rawCycleInput, 30))
+        static char rawCycleInput1[30] = "(1 2 3)";
+        static char rawCycleInput2[30] = "(1 2 3)";
+        if (ImGui::InputText("Permutation1 Cycle Input", rawCycleInput1, 30))
         {
-            SymUI::ProcessCycleNotationInput(rawCycleInput);
+            CPPTRACE_TRY
+            {
+                //permutation1 = 
+                SymUI::ProcessCycleNotationInput(rawCycleInput1);
+            }
+            CPPTRACE_CATCH(const std::exception & e)
+            {
+                std::string errorMsg = "Exception encountered while processing permutation input: ";
+                Sym::PrintErrorToStdErrorStream(e, errorMsg);
+                SymUI::ShowErrorPopup(e, errorMsg);
+            }
+        }
+
+        if (ImGui::InputText("Permutation2 Cycle Input", rawCycleInput2, 30))
+        {
+            CPPTRACE_TRY
+            {
+                //permutation2 = 
+                SymUI::ProcessCycleNotationInput(rawCycleInput2);
+            }
+            CPPTRACE_CATCH(const std::exception& e)
+            {
+                std::string errorMsg = "Exception encountered while processing permutation input: ";
+                Sym::PrintErrorToStdErrorStream(e, errorMsg);
+                SymUI::ShowErrorPopup(e, errorMsg);
+            }
         }
     }
 
