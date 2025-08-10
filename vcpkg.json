@@ -1,14 +1,16 @@
 {
   "dependencies": [
     "imgui",
-    "vcpkg-cmake-config",
-    "vcpkg-cmake",
     "cpptrace"
   ],
   "overrides": [
     {
       "name": "imgui",
       "version": "1.91.9"
+    },
+    {
+      "name": "cpptrace",
+      "version": "1.0.4"
     }
   ]
 }
