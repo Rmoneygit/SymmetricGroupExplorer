@@ -18,9 +18,8 @@ CMakeUserPresets.json
 *.vs/
 CppProperties.json
 
-# vcpkg stuff to ignore
-vcpkg_installed/
-.vcpkg-root
+# conan stuff to ignore
+x64/
 
 # Ignore object files and binary executables
 *.o
@@ -35,3 +34,6 @@ vcpkg_installed/
 *.dylib
 *.pdb
 *.exp
+
+# Other
+imgui_backends/
