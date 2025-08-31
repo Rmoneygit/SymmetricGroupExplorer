@@ -2,14 +2,13 @@
 
 project(SymmetricGroupExplorer)
 
-set(CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/build/generators)
-
 message("FLEX_EXECUTABLE = ${FLEX_EXECUTABLE}")
+message("BISON_EXECUTABLE = ${BISON_EXECUTABLE}")
 
 find_package(IMGUI CONFIG REQUIRED)
 find_package(CPPTRACE CONFIG REQUIRED)
-#find_package(FLEX REQUIRED)
-#find_package(BISON REQUIRED)
+find_package(FLEX REQUIRED)
+find_package(BISON REQUIRED)
 
 # Set the specific ImGui version to use
 set(IMGUI_VERSION_TAG "v1.91.8")
@@ -39,9 +38,9 @@ download_imgui_backend_file("imgui_impl_win32.h")
 download_imgui_backend_file("imgui_impl_dx12.cpp")
 download_imgui_backend_file("imgui_impl_dx12.h")
 
-#flex_target(MyScanner cycle_notation_lexer.l ${CMAKE_CURRENT_BINARY_DIR}/cycle_notation_lexer.cpp)
-#bison_target(MyParser parser.y parser.cpp)
-#add_flex_bison_dependency(MyScanner MyParser)
+flex_target(MyScanner cycle_notation_lexer.l ${CMAKE_CURRENT_BINARY_DIR}/cycle_notation_lexer.cpp)
+bison_target(MyParser parser.y parser.cpp)
+add_flex_bison_dependency(MyScanner MyParser)
 
 # Add the executable, including the backend files
 add_executable(SymmetricGroupExplorer "SymmetricGroupExplorer_main.cpp"
@@ -52,8 +51,8 @@ add_executable(SymmetricGroupExplorer "SymmetricGroupExplorer_main.cpp"
                   "SymUI_input_processing.cpp" 
                   "SymUI_windows.cpp"
                   "SymUI_error_presentation.cpp"
-                  #${BISON_MyParser_OUTPUTS} 
-                  #${FLEX_MyScanner_OUTPUTS}
+                  ${BISON_MyParser_OUTPUTS} 
+                  ${FLEX_MyScanner_OUTPUTS}
               )
 
 target_link_libraries(SymmetricGroupExplorer PRIVATE imgui::imgui cpptrace::cpptrace)
