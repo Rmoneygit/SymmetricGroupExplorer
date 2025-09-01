@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "Sym_data_types.h"
+#include "Sym_data_types.hpp"
 
 namespace SymUI
 {

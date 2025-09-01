@@ -12,7 +12,7 @@
 #include <dxgi1_4.h>
 
 // Normal includes
-#include "SymUI_windows.h"
+#include "SymUI_windows.hpp"
 
 // Standard C++ library includes
 #include <iostream>

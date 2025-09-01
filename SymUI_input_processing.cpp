@@ -4,9 +4,9 @@
     Purpose: Implementations of routines for processing user input
  */
 
-#include "Sym_data_types.h"
-#include "SymUI_data_types.h"
-#include "SymUI_input_processing.h"
+#include "Sym_data_types.hpp"
+#include "SymUI_data_types.hpp"
+#include "SymUI_input_processing.hpp"
 
 #include <cassert>
 #include <iostream>

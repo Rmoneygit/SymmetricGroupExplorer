@@ -13,13 +13,13 @@
 #include <cpptrace/from_current_macros.hpp>
 
 // Normal includes
-#include "Sym_data_types.h"
-#include "Sym_errors.h"
-#include "Sym_symmetric_group.h"
-#include "SymUI_data_types.h"
-#include "SymUI_error_presentation.h"
-#include "SymUI_input_processing.h"
-#include "SymUI_windows.h"
+#include "Sym_data_types.hpp"
+#include "Sym_errors.hpp"
+#include "Sym_symmetric_group.hpp"
+#include "SymUI_data_types.hpp"
+#include "SymUI_error_presentation.hpp"
+#include "SymUI_input_processing.hpp"
+#include "SymUI_windows.hpp"
 
 // Standard library includes
 #include <iostream>

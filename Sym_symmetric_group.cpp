@@ -7,7 +7,7 @@
 #include <vector>
 #include <stdexcept>
 
-#include "Sym_symmetric_group.h"
+#include "Sym_symmetric_group.hpp"
 
 namespace
 {

@@ -8,7 +8,7 @@
 #include <Windows.h>
 
 // Normal includes
-#include "SymUI_error_presentation.h"
+#include "SymUI_error_presentation.hpp"
 
 // Standard library includes
 #include <string>
