@@ -6,13 +6,22 @@ void yyerror(const char* s);
 %}
 
 %token NUMBER
+%token OP_PAREN CL_PAREN
 
 %%
-term: NUMBER
+expression: /* nothing */
+ | expression cycle { std::cout << $2 << "\n"; }
+;
+
+cycle: OP_PAREN number_list CL_PAREN
+;
+
+number_list: /* nothing */
+ | number_list NUMBER
 ;
 %%
 
 void yyerror(const char* s)
 {
-	std::cerr << "error: " << s << std::endl;
+	std::cerr << "error: " << s << "\n";
 }

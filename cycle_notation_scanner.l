@@ -3,11 +3,14 @@
 %option header-file="cycle_notation_scanner.hpp"
 
 %{
+#include <iostream>
 #include "cycle_notation_parser.hpp"
 %}
 
 %%
-"+" { printf("PLUS\n"); }
-\n  { printf("NEWLINE\n"); }
-.   { printf("Mystery character: %s\n", yytext); }
+"("			{ std::cout << "OPENING PARENTHESIS\n"; return OP_PAREN; }
+")"			{ std::cout << "CLOSING PARENTHESIS\n"; return CL_PAREN; }
+[0-9]+		{ std::cout << "NUMBER\n"; return NUMBER; }
+[ \t]		{ /* Ignore whitespace */}
+.			{ std::cout << "Invalid character:" << yytext << "\n"; }
 %%
