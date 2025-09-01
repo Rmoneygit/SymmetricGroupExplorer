@@ -38,9 +38,12 @@ download_imgui_backend_file("imgui_impl_win32.h")
 download_imgui_backend_file("imgui_impl_dx12.cpp")
 download_imgui_backend_file("imgui_impl_dx12.h")
 
-flex_target(MyScanner cycle_notation_lexer.l ${CMAKE_CURRENT_BINARY_DIR}/cycle_notation_lexer.cpp)
-bison_target(MyParser parser.y parser.cpp)
-add_flex_bison_dependency(MyScanner MyParser)
+flex_target(CycleNotationScanner cycle_notation_scanner.l ${CMAKE_CURRENT_BINARY_DIR}/cycle_notation_scanner.cpp)
+bison_target(CycleNotationParser cycle_notation_parser.y ${CMAKE_CURRENT_BINARY_DIR}/cycle_notation_parser.cpp)
+add_flex_bison_dependency(CycleNotationScanner CycleNotationParser)
+
+message("FLEX_CycleNotationScanner_OUTPUTS: " + ${FLEX_CycleNotationScanner_OUTPUTS})
+message("BISON_CycleNotationParser_OUTPUTS: " + ${BISON_CycleNotationParser_OUTPUTS})
 
 # Add the executable, including the backend files
 add_executable(SymmetricGroupExplorer "SymmetricGroupExplorer_main.cpp"
@@ -51,8 +54,8 @@ add_executable(SymmetricGroupExplorer "SymmetricGroupExplorer_main.cpp"
                   "SymUI_input_processing.cpp" 
                   "SymUI_windows.cpp"
                   "SymUI_error_presentation.cpp"
-                  ${BISON_MyParser_OUTPUTS} 
-                  ${FLEX_MyScanner_OUTPUTS}
+                  ${FLEX_CycleNotationScanner_OUTPUTS}
+                  ${BISON_CycleNotationParser_OUTPUTS}
               )
 
 target_link_libraries(SymmetricGroupExplorer PRIVATE imgui::imgui cpptrace::cpptrace)
