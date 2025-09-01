@@ -1,4 +1,6 @@
-%option nounistd noyywrap never-interactive nodefault
+%option noyywrap
+%option nodefault
+%option header-file="cycle_notation_scanner.hpp"
 
 %{
 #include "cycle_notation_parser.hpp"

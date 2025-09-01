@@ -1,5 +1,6 @@
 %{
-#include <stdio.h>
+#include <iostream>
+#include "cycle_notation_scanner.hpp"
 int yylex();
 void yyerror(const char* s);
 %}
@@ -13,5 +14,5 @@ term: NUMBER
 
 void yyerror(const char* s)
 {
-	fprintf(stderr, "error: %s\n", s);
+	std::cerr << "error: " << s << std::endl;
 }

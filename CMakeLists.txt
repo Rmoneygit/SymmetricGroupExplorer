@@ -38,7 +38,7 @@ download_imgui_backend_file("imgui_impl_win32.h")
 download_imgui_backend_file("imgui_impl_dx12.cpp")
 download_imgui_backend_file("imgui_impl_dx12.h")
 
-flex_target(CycleNotationScanner cycle_notation_scanner.l ${CMAKE_CURRENT_BINARY_DIR}/cycle_notation_scanner.cpp)
+flex_target(CycleNotationScanner cycle_notation_scanner.l ${CMAKE_CURRENT_BINARY_DIR}/cycle_notation_scanner.cpp OPTIONS --wincompat)
 bison_target(CycleNotationParser cycle_notation_parser.y ${CMAKE_CURRENT_BINARY_DIR}/cycle_notation_parser.cpp)
 add_flex_bison_dependency(CycleNotationScanner CycleNotationParser)
 
