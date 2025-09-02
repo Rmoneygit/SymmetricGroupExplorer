@@ -54,6 +54,7 @@ add_executable(SymmetricGroupExplorer "SymmetricGroupExplorer_main.cpp"
                   "SymUI_input_processing.cpp" 
                   "SymUI_windows.cpp"
                   "SymUI_error_presentation.cpp"
+                  "Sym_cycle_notation_parser.cpp"
                   ${FLEX_CycleNotationScanner_OUTPUTS}
                   ${BISON_CycleNotationParser_OUTPUTS}
               )
