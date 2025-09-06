@@ -4,6 +4,7 @@
     Purpose: Implementations of routines for processing user input
  */
 
+#include "Sym_cycle_notation_parser.hpp"
 #include "Sym_data_types.hpp"
 #include "SymUI_data_types.hpp"
 #include "SymUI_input_processing.hpp"
@@ -115,8 +116,11 @@ Sym::Permutation SymUI::InitializePermutation(int size)
     return permutation;
 }
 
-Sym::Permutation SymUI::ProcessCycleNotationInput(const char* cycleInput)
+Sym::Permutation SymUI::ProcessCycleNotationInput(const char* cycleInput, const int numSymbols)
 {
+    // Communicate the number of symbols to Bison through this static variable. (Is there another way?)
+    Sym::s_numSymbols = numSymbols;
+
     YY_BUFFER_STATE buf = yy_scan_string(cycleInput);
     yyparse();
     yy_delete_buffer(buf);

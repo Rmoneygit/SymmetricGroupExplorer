@@ -6,34 +6,47 @@
 
 %{
 #include <iostream>
+#include <stdexcept>
 #include "cycle_notation_scanner.hpp"
 #include "../Sym_cycle_notation_parser.hpp"
+#include "../Sym_data_types.hpp"
+
+/* Interface to the scanner*/
+void yyerror(char* s);
+
 %}
 
+%code requires {
+#include "../Sym_cycle_notation_parser.hpp"
+#include "../Sym_data_types.hpp"
+}
+
 %union {
-	struct NumNode* n = nullptr;
+	struct Sym::NumNode* n = nullptr;
 	int i;
+	Sym::Permutation* p;
 }
 
 %token <i> NUMBER
 
 %type <n> number_list
-%type <i> cycle expression
+%type <i> expression
+%type <p> cycle
 
 %%
 expression: /* nothing */
- | expression cycle { std::cout << $2 << "\n"; }
+ | expression cycle { std::cout << "Hi\n"; }
 ;
 
-cycle: '(' number_list ')'	{ PrintNumNodeList($2); $$ = 5; }
+cycle: '(' number_list ')'	{ $$ = Sym::CreatePermutation($2); }
 ;
 
 number_list: /* nothing */
- | number_list NUMBER		{ $$ = AddNodeToTail($1, $2); }
+ | number_list NUMBER		{ $$ = Sym::AddNodeToTail($1, $2); }
 ;
 %%
 
-void yyerror(const char* s)
+void yyerror(char* s)
 {
-	std::cerr << "error: " << s << "\n";
+	std::cout << "Error: " << s << "\n";
 }

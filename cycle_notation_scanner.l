@@ -9,10 +9,11 @@
 %option header-file="cycle_notation_scanner.hpp"
 
 %{
-#include <cstdio>
 #include <cstdlib>
+#include <sstream>
+#include <stdexcept>
 #include "cycle_notation_parser.hpp"
-void yyerror(const char* s);
+#include "../Sym_cycle_notation_parser.hpp"
 %}
 
 %%
@@ -21,8 +22,8 @@ void yyerror(const char* s);
 [0-9]+		{ yylval.i = atoi(yytext); return NUMBER; }
 [ \t]		{ /* Ignore whitespace */}
 .			{ 
-				char message[50];
-				sprintf(message, "Invalid character: %c\n", *yytext);
-				yyerror(message);
-			}
+                std::ostringstream oss;
+                oss << "Invalid character: \'" << *yytext << "\'.";
+                throw std::exception(oss.str().c_str()); 
+            }
 %%

@@ -206,7 +206,7 @@ void SymUI::CalculatorWindow(bool& showWindow)
             CPPTRACE_TRY
             {
                 //permutation1 = 
-                SymUI::ProcessCycleNotationInput(rawCycleInput1);
+                SymUI::ProcessCycleNotationInput(rawCycleInput1, n);
             }
             CPPTRACE_CATCH(const std::exception & e)
             {
@@ -221,7 +221,7 @@ void SymUI::CalculatorWindow(bool& showWindow)
             CPPTRACE_TRY
             {
                 //permutation2 = 
-                SymUI::ProcessCycleNotationInput(rawCycleInput2);
+                SymUI::ProcessCycleNotationInput(rawCycleInput2, n);
             }
             CPPTRACE_CATCH(const std::exception& e)
             {

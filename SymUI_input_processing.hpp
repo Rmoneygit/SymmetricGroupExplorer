@@ -52,5 +52,5 @@ namespace SymUI
     // Also notice that there are multiple different ways to write the same permutation, even just as a single cycle:
     // (143), (431), and (314)
     // all represent the function which maps 1 to 4, 4 to 3, 3 to 1, and 2 to 2.
-    Sym::Permutation ProcessCycleNotationInput(const char* cycleInput);
+    Sym::Permutation ProcessCycleNotationInput(const char* cycleInput, const int numSymbols);
 }
