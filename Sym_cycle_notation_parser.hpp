@@ -13,15 +13,6 @@ namespace Sym
 
     static int s_numSymbols = 3;
 
-    //class PermutationComposition
-    //{
-    //public:
-    //    PermutationComposition(PermutationComposition* left, PermutationComposition* right) : m_left(left), m_right(right) {};
-    //    
-    //    PermutationComposition* m_left;
-    //    PermutationComposition* m_right;
-    //};
-
     struct NumNode
     {
         NumNode(int number, NumNode* next) : m_number(number), m_next(next) {};
@@ -34,7 +25,9 @@ namespace Sym
 
     void PrintNumNodeList(NumNode* head);
 
-    Sym::Permutation* CreatePermutation(NumNode* head);
+    void FreeNumNodeList(NumNode* head);
 
-    //Permutation EvaluateComposition(PermutationComposition* comp);
+    PermutationVector* AddCycleToTail(PermutationVector* vec, Permutation* perm);
+
+    Permutation* CreatePermutation(NumNode* head);
 }

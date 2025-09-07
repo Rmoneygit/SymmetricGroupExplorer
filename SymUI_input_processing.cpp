@@ -118,12 +118,14 @@ Sym::Permutation SymUI::InitializePermutation(int size)
 
 Sym::Permutation SymUI::ProcessCycleNotationInput(const char* cycleInput, const int numSymbols)
 {
-    // Communicate the number of symbols to Bison through this static variable. (Is there another way?)
+    Sym::Permutation result;
+    
+    // Communicate the number of symbols to Bison through this global variable. (Is there another way?)
     Sym::s_numSymbols = numSymbols;
 
     YY_BUFFER_STATE buf = yy_scan_string(cycleInput);
-    yyparse();
+    yyparse(result);
     yy_delete_buffer(buf);
     
-    return Sym::Permutation();
+    return result;
 }

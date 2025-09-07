@@ -6,17 +6,19 @@
 
 #pragma once
 
-#include <vector>
+#include "Sym_data_types.hpp"
 
 namespace Sym
 {
-    std::vector<int> ComposePermutations(const std::vector<int>& permutation1, const std::vector<int>& permutation2);
+    Permutation ComposePermutations(const Permutation& permutation1, const Permutation& permutation2);
 
-    void CommutePermutations(std::vector<int>& permutation1, std::vector<int>& permutation2);
+    Permutation ComposePermutations(const PermutationVector& permutations);
 
-    int CalculateOrder(const std::vector<int>& permutation);
+    void CommutePermutations(Permutation& permutation1, Permutation& permutation2);
 
-    bool EqualsIdentity(const std::vector<int>& permutation);
+    int CalculateOrder(const Permutation& permutation);
 
-    void SetToIdentity(std::vector<int>& permutation);
+    bool EqualsIdentity(const Permutation& permutation);
+
+    void SetToIdentity(Permutation& permutation);
 }

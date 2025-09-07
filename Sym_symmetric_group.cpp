@@ -7,7 +7,10 @@
 #include <vector>
 #include <stdexcept>
 
+#include "Sym_data_types.hpp"
 #include "Sym_symmetric_group.hpp"
+
+using namespace Sym;
 
 namespace
 {
@@ -23,12 +26,12 @@ namespace
     }
 }
 
-std::vector<int> Sym::ComposePermutations(const std::vector<int>& permutation1, const std::vector<int>& permutation2)
+Permutation Sym::ComposePermutations(const Permutation& permutation1, const Permutation& permutation2)
 {
     if (permutation1.size() != permutation2.size())
-        throw std::invalid_argument("Permutations provided should not have different sizes.");
+        throw std::invalid_argument("Cannot compose permutations of different sizes.");
     
-    std::vector<int> result(permutation1.size());
+    Permutation result(permutation1.size());
 
     for (int i = 0; i < permutation2.size(); i++)
     {
@@ -38,7 +41,24 @@ std::vector<int> Sym::ComposePermutations(const std::vector<int>& permutation1, 
     return result;
 }
 
-void Sym::CommutePermutations(std::vector<int>& permutation1, std::vector<int>& permutation2)
+Permutation Sym::ComposePermutations(const PermutationVector& permutations)
+{
+    if (permutations.empty())
+        throw std::invalid_argument("Trying to compose permuations, but none were provided.");
+
+    Permutation result(permutations[0]->size());
+    SetToIdentity(result);
+
+    for (const auto perm : permutations)
+    {
+        Permutation temp(result);
+        result = ComposePermutations(temp, *perm);
+    }
+
+    return result;
+}
+
+void Sym::CommutePermutations(Permutation& permutation1, Permutation& permutation2)
 {
     if(permutation1.size() != permutation2.size())
         throw std::invalid_argument("Permutations provided should not have different sizes.");
@@ -51,9 +71,9 @@ void Sym::CommutePermutations(std::vector<int>& permutation1, std::vector<int>& 
     }
 }
 
-int Sym::CalculateOrder(const std::vector<int>& permutation)
+int Sym::CalculateOrder(const Permutation& permutation)
 {
-    std::vector<int> buffer = permutation;
+    Permutation buffer = permutation;
     int order = 1;
     const int max_possible = factorial(permutation.size());
     while (!Sym::EqualsIdentity(buffer))
@@ -69,7 +89,7 @@ int Sym::CalculateOrder(const std::vector<int>& permutation)
     return order;
 }
 
-bool Sym::EqualsIdentity(const std::vector<int>& permutation)
+bool Sym::EqualsIdentity(const Permutation& permutation)
 {
     for (int i = 0; i < permutation.size(); i++)
     {
@@ -80,7 +100,7 @@ bool Sym::EqualsIdentity(const std::vector<int>& permutation)
     return true;
 }
 
-void Sym::SetToIdentity(std::vector<int>& permutation)
+void Sym::SetToIdentity(Permutation& permutation)
 {
     for (int i = 0; i < permutation.size(); i++)
     {

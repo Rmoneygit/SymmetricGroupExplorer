@@ -61,6 +61,18 @@ void Sym::PrintNumNodeList(NumNode* head)
     std::cout << "\n";
 }
 
+void Sym::FreeNumNodeList(NumNode* head)
+{
+    NumNode* p = head;
+
+    while (p != nullptr)
+    {
+        NumNode* temp = p->m_next;
+        delete p;
+        p = temp;
+    }
+}
+
 Permutation* Sym::CreatePermutation(NumNode* head)
 {
     Permutation* perm = new Permutation(s_numSymbols);
@@ -100,4 +112,16 @@ Permutation* Sym::CreatePermutation(NumNode* head)
     }
 
     return perm;
+}
+
+PermutationVector* Sym::AddCycleToTail(PermutationVector* vec, Permutation* perm)
+{
+    if (vec == nullptr)
+    {
+        vec = new PermutationVector();
+    }
+
+    vec->push_back(perm);
+
+    return vec;
 }
