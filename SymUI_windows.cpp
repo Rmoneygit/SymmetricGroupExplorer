@@ -15,10 +15,10 @@
 // Normal includes
 #include "Sym_data_types.hpp"
 #include "Sym_errors.hpp"
+#include "Sym_input_processing.hpp"
 #include "Sym_symmetric_group.hpp"
 #include "SymUI_data_types.hpp"
 #include "SymUI_error_presentation.hpp"
-#include "SymUI_input_processing.hpp"
 #include "SymUI_windows.hpp"
 
 // Standard library includes
@@ -96,11 +96,11 @@ void SymUI::CalculatorWindow(bool& showWindow)
     {
         static int n = 3;
         static int prevN = 3;
-        static Sym::Permutation inputBuffer1 = InitializePermutation(n);
-        static Sym::Permutation inputBuffer2 = InitializePermutation(n);
-        static Sym::Permutation permutation1 = InitializePermutation(n);
-        static Sym::Permutation permutation2 = InitializePermutation(n);
-        static Sym::Permutation composition = InitializePermutation(n);
+        static Sym::Permutation inputBuffer1 = Sym::InitializePermutation(n);
+        static Sym::Permutation inputBuffer2 = Sym::InitializePermutation(n);
+        static Sym::Permutation permutation1 = Sym::InitializePermutation(n);
+        static Sym::Permutation permutation2 = Sym::InitializePermutation(n);
+        static Sym::Permutation composition = Sym::InitializePermutation(n);
         static Sym::PermutationVector permVector = { &inputBuffer1, &inputBuffer2, &permutation1, &permutation2, &composition };
         static bool dataChanged = false;
         std::vector<ImVec2> perm2InputPositions;
@@ -133,10 +133,10 @@ void SymUI::CalculatorWindow(bool& showWindow)
                 {
                     CPPTRACE_TRY
                     {
-                        SymUI::ProcessPermutationInput(i, inputBuffer1, permutation1);
+                        Sym::ProcessPermutationInput(i, inputBuffer1, permutation1);
                         dataChanged = true;
                     }
-                        CPPTRACE_CATCH(const std::exception & e)
+                    CPPTRACE_CATCH(const std::exception & e)
                     {
                         std::string errorMsg = "Exception encountered while processing permutation input: ";
                         Sym::PrintErrorToStdErrorStream(e, errorMsg);
@@ -177,7 +177,7 @@ void SymUI::CalculatorWindow(bool& showWindow)
                 {
                     CPPTRACE_TRY
                     {
-                        SymUI::ProcessPermutationInput(i, inputBuffer2, permutation2);
+                        Sym::ProcessPermutationInput(i, inputBuffer2, permutation2);
                         dataChanged = true;
                     }
                     CPPTRACE_CATCH(const std::exception& e)
@@ -226,7 +226,7 @@ void SymUI::CalculatorWindow(bool& showWindow)
             CPPTRACE_TRY
             {
                 // This transfers values to the internal data structure
-                SymUI::CopyPermutation(permutation1, composition);
+                Sym::CopyPermutation(permutation1, composition);
                 dataChanged = true;
             }
                 CPPTRACE_CATCH(const std::exception & e)
@@ -265,8 +265,8 @@ void SymUI::CalculatorWindow(bool& showWindow)
             CPPTRACE_TRY
             {
                 // This transfers values to the input fields so the change is visible to the user
-                SymUI::CopyPermutation(inputBuffer1, permutation1);
-                SymUI::CopyPermutation(inputBuffer2, permutation2);
+                Sym::CopyPermutation(inputBuffer1, permutation1);
+                Sym::CopyPermutation(inputBuffer2, permutation2);
 
                 composition = Sym::ComposePermutations(permutation1, permutation2);
                 dataChanged = false;
@@ -311,9 +311,9 @@ void SymUI::CalculatorWindow(bool& showWindow)
         static int prevN = 3;
         static char rawCycleInput1[30] = "(1 2 3)";
         static char rawCycleInput2[30] = "(1 2 3)";
-        static Sym::Permutation permutation1 = InitializePermutation(n);
-        static Sym::Permutation permutation2 = InitializePermutation(n);
-        static Sym::Permutation composition = InitializePermutation(n);
+        static Sym::Permutation permutation1 = Sym::InitializePermutation(n);
+        static Sym::Permutation permutation2 = Sym::InitializePermutation(n);
+        static Sym::Permutation composition = Sym::InitializePermutation(n);
         static Sym::PermutationVector permVector = { &permutation1, &permutation2, &composition };
 
         SymUI::PermutationSizeSlider(n, prevN, permVector);
@@ -328,7 +328,7 @@ void SymUI::CalculatorWindow(bool& showWindow)
         {
             CPPTRACE_TRY
             {
-                permutation1 = SymUI::ProcessCycleNotationInput(rawCycleInput1, n);
+                permutation1 = Sym::ProcessCycleNotationInput(rawCycleInput1, n);
             }
             CPPTRACE_CATCH(const std::exception& e)
             {
@@ -339,7 +339,7 @@ void SymUI::CalculatorWindow(bool& showWindow)
 
             CPPTRACE_TRY
             {
-                permutation2 = SymUI::ProcessCycleNotationInput(rawCycleInput2, n);
+                permutation2 = Sym::ProcessCycleNotationInput(rawCycleInput2, n);
             }
             CPPTRACE_CATCH(const std::exception& e)
             {
@@ -375,8 +375,8 @@ void SymUI::OrderWindow(bool& showWindow)
 {
     static int n = 3;
     static int prevN = 3;
-    static Sym::Permutation inputBuffer = InitializePermutation(n);
-    static Sym::Permutation permutation = InitializePermutation(n);
+    static Sym::Permutation inputBuffer = Sym::InitializePermutation(n);
+    static Sym::Permutation permutation = Sym::InitializePermutation(n);
     static Sym::PermutationVector permVector = { &inputBuffer, &permutation };
     static int order = 1;
 
@@ -407,7 +407,7 @@ void SymUI::OrderWindow(bool& showWindow)
             {
                 CPPTRACE_TRY
                 {
-                    ProcessPermutationInput(i, inputBuffer, permutation);
+                    Sym::ProcessPermutationInput(i, inputBuffer, permutation);
                 }
                 CPPTRACE_CATCH(const std::exception & e)
                 {
@@ -468,7 +468,7 @@ bool SymUI::PermutationSizeSlider(int& n, int& prevN, Sym::PermutationVector& pe
             {
                 for (Sym::Permutation* permutation : permVec)
                 {
-                    ShrinkPermutationByOne(*permutation);
+                    Sym::ShrinkPermutationByOne(*permutation);
                 }
             }
         }

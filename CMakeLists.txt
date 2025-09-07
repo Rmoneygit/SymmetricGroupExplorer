@@ -51,7 +51,7 @@ add_executable(SymmetricGroupExplorer "SymmetricGroupExplorer_main.cpp"
                   ${IMGUI_BACKENDS_DIR}/imgui_impl_dx12.cpp
                   "Sym_errors.cpp"
                   "Sym_symmetric_group.cpp"
-                  "SymUI_input_processing.cpp" 
+                  "Sym_input_processing.cpp" 
                   "SymUI_windows.cpp"
                   "SymUI_error_presentation.cpp"
                   "Sym_cycle_notation_parser.cpp"

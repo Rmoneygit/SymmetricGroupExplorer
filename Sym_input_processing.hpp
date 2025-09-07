@@ -8,18 +8,18 @@
 
 #include "Sym_data_types.hpp"
 
-namespace SymUI
+namespace Sym
 {
     // This method takes the permutation entered by the user in the UI and validates it.
     // First parameter is the entry in the permutation which will change. The new value is in inputBuffer.
     // If it passes the processing checks, it will be transferred to permutation (the third parameter)
-    void ProcessPermutationInput(int i, Sym::Permutation& inputBuffer, Sym::Permutation& permutation);
+    void ProcessPermutationInput(int i, Permutation& inputBuffer, Permutation& permutation);
 
-    void ShrinkPermutationByOne(Sym::Permutation& permutation);
+    void ShrinkPermutationByOne(Permutation& permutation);
 
-    void CopyPermutation(Sym::Permutation& destination, Sym::Permutation& source);
+    void CopyPermutation(Permutation& destination, Permutation& source);
 
-    Sym::Permutation InitializePermutation(int size);
+    Permutation InitializePermutation(int size);
 
     // Purpose: Process permutations written in cycle notation.
     // 
@@ -52,5 +52,5 @@ namespace SymUI
     // Also notice that there are multiple different ways to write the same permutation, even just as a single cycle:
     // (143), (431), and (314)
     // all represent the function which maps 1 to 4, 4 to 3, 3 to 1, and 2 to 2.
-    Sym::Permutation ProcessCycleNotationInput(const char* cycleInput, const int numSymbols);
+    Permutation ProcessCycleNotationInput(const char* cycleInput, const int numSymbols);
 }
