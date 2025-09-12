@@ -11,7 +11,7 @@
 namespace Sym
 {
 
-    static int s_numSymbols = 3;
+    extern int g_numSymbols;
 
     struct NumNode
     {

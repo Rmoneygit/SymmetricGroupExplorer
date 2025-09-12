@@ -124,7 +124,7 @@ Permutation Sym::ProcessCycleNotationInput(const char* cycleInput, const int num
     Permutation result;
     
     // Communicate the number of symbols to Bison through this global variable. (Is there another way?)
-    s_numSymbols = numSymbols;
+    g_numSymbols = numSymbols;
 
     YY_BUFFER_STATE buf = yy_scan_string(cycleInput);
     yyparse(result);

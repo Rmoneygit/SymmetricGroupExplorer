@@ -14,6 +14,8 @@
 
 using namespace Sym;
 
+extern int Sym::g_numSymbols = 3;
+
 NumNode* Sym::AddNodeToTail(NumNode* head, int value)
 {
     if (value <= 0)
@@ -23,10 +25,10 @@ NumNode* Sym::AddNodeToTail(NumNode* head, int value)
         throw std::exception(oss.str().c_str());
     }
 
-    if (value > s_numSymbols)
+    if (value > g_numSymbols)
     {
         std::ostringstream oss;
-        oss << "Encountered the number \'" << value << "\', which is greater than the maximum possible value \'" << s_numSymbols << "\'.";
+        oss << "Encountered the number \'" << value << "\', which is greater than the maximum possible value \'" << g_numSymbols << "\'.";
         throw std::exception(oss.str().c_str());
     }
     
@@ -75,7 +77,7 @@ void Sym::FreeNumNodeList(NumNode* head)
 
 Permutation* Sym::CreatePermutation(NumNode* head)
 {
-    Permutation* perm = new Permutation(s_numSymbols);
+    Permutation* perm = new Permutation(g_numSymbols);
 
     // Initializing the permutation to identity is useful since it enforces this rule:
     // In a cycle, any number not explicitly written is mapped to itself.
