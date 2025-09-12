@@ -162,5 +162,12 @@ std::string Sym::GetCycleNotationString(const Permutation& permutation)
         while(currNum != cycleStart);
     }
 
+    // Special case: If provided the identity permutation, then the above loop skips every element.
+    // But rather than return an empty string, we should return (1).
+    if (cycleString == "")
+    {
+        cycleString = "(1)";
+    }
+
     return cycleString;
 }

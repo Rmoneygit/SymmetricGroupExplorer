@@ -211,7 +211,7 @@ void SymUI::CalculatorWindow(bool& showWindow)
                 Sym::CommutePermutations(permutation1, permutation2);
                 dataChanged = true;
             }
-                CPPTRACE_CATCH(const std::exception & e)
+            CPPTRACE_CATCH(const std::exception & e)
             {
                 std::string errorMsg = "Exception encountered while executing \"Commute\" command: ";
                 Sym::PrintErrorToStdErrorStream(e, errorMsg);
@@ -229,7 +229,7 @@ void SymUI::CalculatorWindow(bool& showWindow)
                 Sym::CopyPermutation(permutation1, composition);
                 dataChanged = true;
             }
-                CPPTRACE_CATCH(const std::exception & e)
+            CPPTRACE_CATCH(const std::exception & e)
             {
                 std::string errorMsg = "Exception encountered while executing \"Use Output\" command: ";
                 Sym::PrintErrorToStdErrorStream(e, errorMsg);
@@ -271,7 +271,7 @@ void SymUI::CalculatorWindow(bool& showWindow)
                 composition = Sym::ComposePermutations(permutation1, permutation2);
                 dataChanged = false;
             }
-                CPPTRACE_CATCH(const std::exception & e)
+            CPPTRACE_CATCH(const std::exception & e)
             {
                 std::string errorMsg = "Exception encountered while trying to update internal data model: ";
                 Sym::PrintErrorToStdErrorStream(e, errorMsg);
@@ -344,7 +344,7 @@ void SymUI::CalculatorWindow(bool& showWindow)
             }
             CPPTRACE_CATCH(const std::exception& e)
             {
-                std::string errorMsg = "Exception encountered while executing \"Compose\" command: ";
+                std::string errorMsg = "Exception while executing \"Compose\" command: ";
                 Sym::PrintErrorToStdErrorStream(e, errorMsg);
                 SymUI::ShowErrorPopup(e, errorMsg);
 
