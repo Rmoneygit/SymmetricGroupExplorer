@@ -252,7 +252,7 @@ void SymUI::CalculatorWindow(bool& showWindow)
                 }
                 dataChanged = true;
             }
-                CPPTRACE_CATCH(const std::exception & e)
+            CPPTRACE_CATCH(const std::exception & e)
             {
                 std::string errorMsg = "Exception encountered while executing \"Reset\" command: ";
                 Sym::PrintErrorToStdErrorStream(e, errorMsg);
@@ -327,30 +327,18 @@ void SymUI::CalculatorWindow(bool& showWindow)
 
         if (ImGui::Button("Compose"))
         {
+            // Cleanup from previous runs
+            compositionString = "";
+            for (Sym::Permutation* perm : permVector)
+            {
+                Sym::SetToIdentity(*perm);
+            }
+
             CPPTRACE_TRY
             {
                 permutation1 = Sym::ProcessCycleNotationInput(rawCycleInput1, n);
-            }
-            CPPTRACE_CATCH(const std::exception& e)
-            {
-                std::string errorMsg = "Exception while processing left permutation input: ";
-                Sym::PrintErrorToStdErrorStream(e, errorMsg);
-                SymUI::ShowErrorPopup(e, errorMsg);
-            }
-
-            CPPTRACE_TRY
-            {
                 permutation2 = Sym::ProcessCycleNotationInput(rawCycleInput2, n);
-            }
-            CPPTRACE_CATCH(const std::exception& e)
-            {
-                std::string errorMsg = "Exception while processing right permutation input: ";
-                Sym::PrintErrorToStdErrorStream(e, errorMsg);
-                SymUI::ShowErrorPopup(e, errorMsg);
-            }
 
-            CPPTRACE_TRY
-            {
                 composition = Sym::ComposePermutations(permutation1, permutation2);
                 compositionString = Sym::GetCycleNotationString(composition);
             }
@@ -359,6 +347,12 @@ void SymUI::CalculatorWindow(bool& showWindow)
                 std::string errorMsg = "Exception encountered while executing \"Compose\" command: ";
                 Sym::PrintErrorToStdErrorStream(e, errorMsg);
                 SymUI::ShowErrorPopup(e, errorMsg);
+
+                compositionString = "";
+                for (Sym::Permutation* perm : permVector)
+                {
+                    Sym::SetToIdentity(*perm);
+                }
             }
         }
 
