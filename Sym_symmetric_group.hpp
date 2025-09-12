@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include <string>
+
 #include "Sym_data_types.hpp"
 
 namespace Sym
@@ -21,4 +23,6 @@ namespace Sym
     bool EqualsIdentity(const Permutation& permutation);
 
     void SetToIdentity(Permutation& permutation);
+
+    std::string GetCycleNotationString(const Permutation& permutation);
 }

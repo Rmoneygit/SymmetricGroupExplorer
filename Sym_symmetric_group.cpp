@@ -4,8 +4,10 @@
     Purpose: Implementations of routines for core algorithms dealing with the symmetric group.
  */
 
+#include <cstdlib>
 #include <vector>
 #include <stdexcept>
+#include <unordered_set>
 
 #include "Sym_data_types.hpp"
 #include "Sym_symmetric_group.hpp"
@@ -106,4 +108,59 @@ void Sym::SetToIdentity(Permutation& permutation)
     {
         permutation[i] = i + 1;
     }
+}
+
+std::string Sym::GetCycleNotationString(const Permutation& permutation)
+{
+    std::string cycleString = "";
+
+    std::unordered_set<int> numsFound;
+    int n = permutation.size();
+
+    for (int currNum = 1; currNum <= permutation.size(); currNum++)
+    {
+        // If this number has already been seen in some cycle, skip. In general, it's completely
+        // possible and fine for a number to appear in multiple cycles. But here we will write the
+        // permutation as a product of disjoint cycles (no common elements)
+        if (numsFound.find(currNum) != numsFound.end())
+        {
+            continue;
+        }
+
+        // If this number is unmoved by the permutation (maps to itself), skip.
+        // In cycle notation, those numbers are not written and are implied by context.
+        if (currNum == permutation[currNum - 1])
+        {
+            continue;
+        }
+
+        // Traverse through the cycle that currNum is a part of
+        int cycleStart = currNum;
+        cycleString += "(";
+
+        do
+        {
+            // This permutation maps currNum to nextNum
+            int nextNum = permutation[currNum - 1];
+            
+            // Since this is a set, if this number has already been encountered, inserting again is a no-op
+            numsFound.insert(nextNum);
+
+            cycleString += std::to_string(nextNum);
+            currNum = nextNum;
+
+            // If we've reached the end of the cycle, close the parentheses
+            if (currNum == cycleStart)
+            {
+                cycleString += ")";
+            }
+            else
+            {
+                cycleString += " ";
+            }
+        }
+        while(currNum != cycleStart);
+    }
+
+    return cycleString;
 }

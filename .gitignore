@@ -18,6 +18,9 @@ CMakeUserPresets.json
 *.vs/
 CppProperties.json
 
+# Visual Studio Code stuff to ignore
+.vscode
+
 # conan stuff to ignore
 x64/
 

@@ -315,6 +315,7 @@ void SymUI::CalculatorWindow(bool& showWindow)
         static Sym::Permutation permutation2 = Sym::InitializePermutation(n);
         static Sym::Permutation composition = Sym::InitializePermutation(n);
         static Sym::PermutationVector permVector = { &permutation1, &permutation2, &composition };
+        static std::string compositionString;
 
         SymUI::PermutationSizeSlider(n, prevN, permVector);
 
@@ -351,6 +352,7 @@ void SymUI::CalculatorWindow(bool& showWindow)
             CPPTRACE_TRY
             {
                 composition = Sym::ComposePermutations(permutation1, permutation2);
+                compositionString = Sym::GetCycleNotationString(composition);
             }
             CPPTRACE_CATCH(const std::exception& e)
             {
@@ -358,14 +360,13 @@ void SymUI::CalculatorWindow(bool& showWindow)
                 Sym::PrintErrorToStdErrorStream(e, errorMsg);
                 SymUI::ShowErrorPopup(e, errorMsg);
             }
-
-            std::cout << "Composition:\n";
-            for (int i = 0; i < composition.size(); i++)
-            {
-                std::cout << i + 1 << " ---> " << composition[i] << " ";
-            }
-            std::cout << std::endl;
         }
+
+        ImGui::Spacing();
+        ImGui::Spacing();
+
+        ImGui::Text("Composition");
+        ImGui::Text(compositionString.c_str());
     }
 
     ImGui::End();
