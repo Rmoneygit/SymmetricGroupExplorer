@@ -140,26 +140,18 @@ std::string Sym::GetCycleNotationString(const Permutation& permutation)
 
         do
         {
-            // This permutation maps currNum to nextNum
-            int nextNum = permutation[currNum - 1];
-            
             // Since this is a set, if this number has already been encountered, inserting again is a no-op
-            numsFound.insert(nextNum);
+            numsFound.insert(currNum);
 
-            cycleString += std::to_string(nextNum);
-            currNum = nextNum;
+            cycleString += std::to_string(currNum) + " ";
 
-            // If we've reached the end of the cycle, close the parentheses
-            if (currNum == cycleStart)
-            {
-                cycleString += ")";
-            }
-            else
-            {
-                cycleString += " ";
-            }
+            currNum = permutation[currNum - 1];
         }
         while(currNum != cycleStart);
+
+        // After reaching the end of the cycle, close the parentheses
+        cycleString.back() = ')';
+
     }
 
     // Special case: If provided the identity permutation, then the above loop skips every element.
