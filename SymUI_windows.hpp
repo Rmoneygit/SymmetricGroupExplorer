@@ -34,4 +34,6 @@ namespace SymUI
     
     // This is intended to be called inside of a ImGui::BeginTable block. It will return position and size information of the current table
     ImRect GetTableCellRect();
+
+    void AboutWindow(bool& showWindow);
 }

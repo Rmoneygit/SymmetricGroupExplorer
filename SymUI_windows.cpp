@@ -30,6 +30,7 @@ void SymUI::MainWindow()
 {
     static bool showCalculator = false;
     static bool showOrder = false;
+    static bool showAbout = false;
 
     if (ImGui::BeginMainMenuBar())
     {
@@ -41,6 +42,11 @@ void SymUI::MainWindow()
         {
             showOrder = true;
         }
+        if (ImGui::MenuItem("About"))
+        {
+            showAbout = true;
+        }
+
         ImGui::EndMainMenuBar();
     }
 
@@ -70,6 +76,11 @@ void SymUI::MainWindow()
             Sym::PrintErrorToStdErrorStream(e, errorMsg);
             SymUI::ShowErrorPopup(e, errorMsg);
         }
+    }
+
+    if (showAbout)
+    {
+        SymUI::AboutWindow(showAbout);
     }
 }
 
@@ -502,4 +513,21 @@ ImRect SymUI::GetTableCellRect()
     float y2 = table->RowPosY2;
 
     return ImRect(ImVec2(x1, y1), ImVec2(x2, y2));
+}
+
+void SymUI::AboutWindow(bool& showWindow)
+{
+    ImGui::Begin("About", &showWindow);
+
+    ImGui::Text("Symmetric Group Explorer Pre-Release Version");
+
+    ImGui::Spacing();
+
+    ImGui::Text("(c) 2024-2025 Ryan Patrick");
+
+    ImGui::Spacing();
+
+    ImGui::Text("License: GNU GPL Version 3");
+
+    ImGui::End();
 }
