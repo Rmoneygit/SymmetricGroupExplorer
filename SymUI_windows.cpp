@@ -103,22 +103,25 @@ void SymUI::CalculatorWindow(bool& showWindow)
         ImGui::EndMenuBar();
     }
 
+    static int n = 3;
+    static int prevN = 3;
+    static Sym::Permutation inputBuffer1 = Sym::InitializePermutation(n);
+    static Sym::Permutation inputBuffer2 = Sym::InitializePermutation(n);
+    static Sym::Permutation permutation1 = Sym::InitializePermutation(n);
+    static Sym::Permutation permutation2 = Sym::InitializePermutation(n);
+    static Sym::Permutation composition = Sym::InitializePermutation(n);
+    static Sym::PermutationVector permVector = { &inputBuffer1, &inputBuffer2, &permutation1, &permutation2, &composition };
+    static bool dataChanged = false;
+    std::vector<ImVec2> perm2InputPositions;
+    std::vector<ImVec2> perm1LabelPositions;
+    static char rawCycleInput1[30] = "(1 2 3)";
+    static char rawCycleInput2[30] = "(1 2 3)";
+    static std::string compositionString;
+
+    dataChanged = SymUI::PermutationSizeSlider(n, prevN, permVector);
+
     if (inputMode == TABLE)
     {
-        static int n = 3;
-        static int prevN = 3;
-        static Sym::Permutation inputBuffer1 = Sym::InitializePermutation(n);
-        static Sym::Permutation inputBuffer2 = Sym::InitializePermutation(n);
-        static Sym::Permutation permutation1 = Sym::InitializePermutation(n);
-        static Sym::Permutation permutation2 = Sym::InitializePermutation(n);
-        static Sym::Permutation composition = Sym::InitializePermutation(n);
-        static Sym::PermutationVector permVector = { &inputBuffer1, &inputBuffer2, &permutation1, &permutation2, &composition };
-        static bool dataChanged = false;
-        std::vector<ImVec2> perm2InputPositions;
-        std::vector<ImVec2> perm1LabelPositions;
-        
-        dataChanged = SymUI::PermutationSizeSlider(n, prevN, permVector);
-
         ImGui::Text("Left Permutation");
         if (ImGui::BeginTable("permutation1Table", n, ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
         {
@@ -208,10 +211,10 @@ void SymUI::CalculatorWindow(bool& showWindow)
         }
 
         //for (int i = 0; i < n; i++)
-//{
-//    int val = permutation2[i];
-//    SymUI::DrawArrowBetweenPoints(perm2InputPositions[i], perm1LabelPositions[val - 1], ImColor(255.0f, 0.0f, 0.0f));
-//}
+        //{
+        //    int val = permutation2[i];
+        //    SymUI::DrawArrowBetweenPoints(perm2InputPositions[i], perm1LabelPositions[val - 1], ImColor(255.0f, 0.0f, 0.0f));
+        //}
 
         ImGui::Spacing();
 
@@ -265,7 +268,21 @@ void SymUI::CalculatorWindow(bool& showWindow)
             }
             CPPTRACE_CATCH(const std::exception & e)
             {
-                std::string errorMsg = "Exception encountered while executing \"Reset\" command: ";
+                std::string errorMsg = "Exception while executing \"Reset\" command: ";
+                Sym::PrintErrorToStdErrorStream(e, errorMsg);
+                SymUI::ShowErrorPopup(e, errorMsg);
+            }
+        }
+
+        if (ImGui::Button("Compose"))
+        {
+            CPPTRACE_TRY
+            {
+                composition = Sym::ComposePermutations(permutation1, permutation2);
+            }
+            CPPTRACE_CATCH(const std::exception& e)
+            {
+                std::string errorMsg = "Exception while executing \"Compose\" command: ";
                 Sym::PrintErrorToStdErrorStream(e, errorMsg);
                 SymUI::ShowErrorPopup(e, errorMsg);
             }
@@ -273,21 +290,10 @@ void SymUI::CalculatorWindow(bool& showWindow)
 
         if (dataChanged)
         {
-            CPPTRACE_TRY
-            {
-                // This transfers values to the input fields so the change is visible to the user
-                Sym::CopyPermutation(inputBuffer1, permutation1);
-                Sym::CopyPermutation(inputBuffer2, permutation2);
-
-                composition = Sym::ComposePermutations(permutation1, permutation2);
-                dataChanged = false;
-            }
-            CPPTRACE_CATCH(const std::exception & e)
-            {
-                std::string errorMsg = "Exception encountered while trying to update internal data model: ";
-                Sym::PrintErrorToStdErrorStream(e, errorMsg);
-                SymUI::ShowErrorPopup(e, errorMsg);
-            }
+            // This transfers values to the input fields so the change is visible to the user
+            Sym::CopyPermutation(inputBuffer1, permutation1);
+            Sym::CopyPermutation(inputBuffer2, permutation2);
+            dataChanged = false;
         }
 
         ImGui::Spacing();
@@ -318,18 +324,6 @@ void SymUI::CalculatorWindow(bool& showWindow)
     }
     else if (inputMode == CYCLE)
     {
-        static int n = 3;
-        static int prevN = 3;
-        static char rawCycleInput1[30] = "(1 2 3)";
-        static char rawCycleInput2[30] = "(1 2 3)";
-        static Sym::Permutation permutation1 = Sym::InitializePermutation(n);
-        static Sym::Permutation permutation2 = Sym::InitializePermutation(n);
-        static Sym::Permutation composition = Sym::InitializePermutation(n);
-        static Sym::PermutationVector permVector = { &permutation1, &permutation2, &composition };
-        static std::string compositionString;
-
-        SymUI::PermutationSizeSlider(n, prevN, permVector);
-
         ImGui::Text("Left Permutation");
         ImGui::InputText("##hidden Permutation1 Cycle Input", rawCycleInput1, 30);
 
