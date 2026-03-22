@@ -140,12 +140,21 @@ std::string Sym::GetCycleNotationString(const Permutation& permutation)
 
         do
         {
+            int iterations = 0;
+
             // Since this is a set, if this number has already been encountered, inserting again is a no-op
             numsFound.insert(currNum);
 
             cycleString += std::to_string(currNum) + " ";
 
             currNum = permutation[currNum - 1];
+
+            if (iterations > permutation.size())
+            {
+                throw std::exception("Failed to generate cycle notation string for permutation.");
+            }
+
+            iterations++;
         }
         while(currNum != cycleStart);
 
