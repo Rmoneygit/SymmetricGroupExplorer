@@ -119,16 +119,31 @@ Permutation Sym::InitializePermutation(int size)
     return permutation;
 }
 
-Permutation Sym::ProcessCycleNotationInput(const char* cycleInput, const int numSymbols)
+Permutation Sym::ProcessCycleNotationInput(const char* cycleInput)
 {
     Permutation result;
-    
-    // Communicate the number of symbols to Bison through this global variable. (Is there another way?)
-    g_numSymbols = numSymbols;
 
     YY_BUFFER_STATE buf = yy_scan_string(cycleInput);
     yyparse(result);
     yy_delete_buffer(buf);
     
     return result;
+}
+
+void Sym::ResizeAllToMax(PermutationVector& permVector)
+{
+    size_t maxSize = 1;
+    for (Permutation* perm : permVector)
+    {
+        if (perm->size() > maxSize)
+            maxSize = perm->size();
+    }
+
+    for (Permutation* perm : permVector)
+    {
+        for (int i = perm->size(); i < maxSize; i++)
+        {
+            perm->push_back(i + 1);
+        }
+    }
 }

@@ -10,9 +10,6 @@
 
 namespace Sym
 {
-
-    extern int g_numSymbols;
-
     struct NumNode
     {
         NumNode(int number, NumNode* next) : m_number(number), m_next(next) {};

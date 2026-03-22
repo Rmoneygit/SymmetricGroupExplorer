@@ -47,10 +47,14 @@ namespace Sym
     // (4 6 7)(3 4 5)
     //
     // Strictly speaking, cycle notation is ambiguous - the above permutation might be in S_7, or S_8, or in any
-    // S_n with n >= 7. As long as the context of what S_n we're in is given, this isn't a problem.
+    // S_n with n >= 7. In this program, it will be assumed that if n is the largest value in any cycle, then the
+    // permutation is in S_n. This makes things more convenient for users sometimes.
     //
     // Also notice that there are multiple different ways to write the same permutation, even just as a single cycle:
     // (143), (431), and (314)
     // all represent the function which maps 1 to 4, 4 to 3, 3 to 1, and 2 to 2.
-    Permutation ProcessCycleNotationInput(const char* cycleInput, const int numSymbols);
+    Permutation ProcessCycleNotationInput(const char* cycleInput);
+
+    // Makes all the permutations the same size as the largest one in the list
+    void ResizeAllToMax(PermutationVector& permVector);
 }

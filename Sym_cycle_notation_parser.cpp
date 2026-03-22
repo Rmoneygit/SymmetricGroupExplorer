@@ -14,21 +14,13 @@
 
 using namespace Sym;
 
-extern int Sym::g_numSymbols = 3;
-
+// -------------------------------------------------------------------------------------------------
 NumNode* Sym::AddNodeToTail(NumNode* head, int value)
 {
     if (value <= 0)
     {
         std::ostringstream oss;
         oss << "Encountered the nonpositive number \'" << value << "\' in a cycle.";
-        throw std::exception(oss.str().c_str());
-    }
-
-    if (value > g_numSymbols)
-    {
-        std::ostringstream oss;
-        oss << "Encountered the number \'" << value << "\', which is greater than the maximum possible value \'" << g_numSymbols << "\'.";
         throw std::exception(oss.str().c_str());
     }
     
@@ -51,6 +43,7 @@ NumNode* Sym::AddNodeToTail(NumNode* head, int value)
     return head;
 }
 
+// -------------------------------------------------------------------------------------------------
 void Sym::PrintNumNodeList(NumNode* head)
 {
     NumNode* p = head;
@@ -63,6 +56,7 @@ void Sym::PrintNumNodeList(NumNode* head)
     std::cout << "\n";
 }
 
+// -------------------------------------------------------------------------------------------------
 void Sym::FreeNumNodeList(NumNode* head)
 {
     NumNode* p = head;
@@ -75,17 +69,28 @@ void Sym::FreeNumNodeList(NumNode* head)
     }
 }
 
+// -------------------------------------------------------------------------------------------------
 Permutation* Sym::CreatePermutation(NumNode* head)
 {
-    Permutation* perm = new Permutation(g_numSymbols);
+    // Example: for (2 4 3), we will assume this is a permutation on 4 symbols.
+    NumNode* p = head;
+    int max = 1;
+    while (p != nullptr)
+    {
+        if (p->m_number > max)
+            max = p->m_number;
+
+        p = p->m_next;
+    }
+
+    Permutation* perm = new Permutation(max);
 
     // Initializing the permutation to identity is useful since it enforces this rule:
     // In a cycle, any number not explicitly written is mapped to itself.
     SetToIdentity(*perm);
     
     std::unordered_set<int> encounteredNumbers;
-
-    NumNode* p = head;
+    p = head;
     while (p != nullptr)
     {
         auto iter = encounteredNumbers.find(p->m_number);
@@ -116,6 +121,7 @@ Permutation* Sym::CreatePermutation(NumNode* head)
     return perm;
 }
 
+// -------------------------------------------------------------------------------------------------
 PermutationVector* Sym::AddCycleToTail(PermutationVector* vec, Permutation* perm)
 {
     if (vec == nullptr)

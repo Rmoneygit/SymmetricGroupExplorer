@@ -111,17 +111,17 @@ void SymUI::CalculatorWindow(bool& showWindow)
     static Sym::Permutation permutation2 = Sym::InitializePermutation(n);
     static Sym::Permutation composition = Sym::InitializePermutation(n);
     static Sym::PermutationVector permVector = { &inputBuffer1, &inputBuffer2, &permutation1, &permutation2, &composition };
-    static bool dataChanged = false;
     std::vector<ImVec2> perm2InputPositions;
     std::vector<ImVec2> perm1LabelPositions;
     static char rawCycleInput1[30] = "(1 2 3)";
     static char rawCycleInput2[30] = "(1 2 3)";
     static std::string compositionString;
 
-    dataChanged = SymUI::PermutationSizeSlider(n, prevN, permVector);
-
     if (inputMode == TABLE)
     {
+        static bool dataChanged = false;
+        dataChanged = SymUI::PermutationSizeSlider(n, prevN, permVector);
+        
         ImGui::Text("Left Permutation");
         if (ImGui::BeginTable("permutation1Table", n, ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
         {
@@ -341,8 +341,11 @@ void SymUI::CalculatorWindow(bool& showWindow)
 
             CPPTRACE_TRY
             {
-                permutation1 = Sym::ProcessCycleNotationInput(rawCycleInput1, n);
-                permutation2 = Sym::ProcessCycleNotationInput(rawCycleInput2, n);
+                permutation1 = Sym::ProcessCycleNotationInput(rawCycleInput1);
+                permutation2 = Sym::ProcessCycleNotationInput(rawCycleInput2);
+
+                Sym::PermutationVector permVec = { &permutation1, &permutation2 };
+                Sym::ResizeAllToMax(permVec);
 
                 composition = Sym::ComposePermutations(permutation1, permutation2);
                 compositionString = Sym::GetCycleNotationString(composition);

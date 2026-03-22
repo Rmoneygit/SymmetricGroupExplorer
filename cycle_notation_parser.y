@@ -9,6 +9,7 @@
 #include "cycle_notation_scanner.hpp"
 #include "../Sym_cycle_notation_parser.hpp"
 #include "../Sym_data_types.hpp"
+#include "../Sym_input_processing.hpp"
 #include "../Sym_symmetric_group.hpp"
 
 /* Interface to the scanner*/
@@ -38,6 +39,7 @@ void yyerror(Sym::Permutation&, char* s);
 
 %%
 expression: cycle_list { 
+							Sym::ResizeAllToMax(*$1);
 							result = Sym::ComposePermutations(*$1);
 							delete $1;
 							$1 = nullptr;
