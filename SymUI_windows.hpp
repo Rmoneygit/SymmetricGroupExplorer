@@ -6,10 +6,15 @@
 
 #pragma once
 
+// IMGUI 3rd-party library includes
 #include "imgui.h"
 #include "imgui_internal.h"
 
+// Normal Includes
 #include "Sym_data_types.hpp"
+
+// C++ Standard Library includes
+#include <cstdint>
 
 namespace SymUI
 {
@@ -36,4 +41,7 @@ namespace SymUI
     ImRect GetTableCellRect();
 
     void AboutWindow(bool& showWindow);
+
+    // Wrapper around ImGui::InputInt to pass in unsigned 32-bit integer
+    bool InputUInt32(const char* label, std::uint32_t& v, int step = 1, int step_fast = 100, ImGuiInputTextFlags flags = 0);
 }

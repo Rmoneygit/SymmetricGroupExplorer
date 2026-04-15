@@ -7,9 +7,10 @@
 #pragma once
 
 #include <vector>
+#include <cstdint>
 
 namespace Sym
 {
-	typedef std::vector<int> Permutation;
-	typedef std::vector<Permutation*> PermutationVector;
+	using Permutation = std::vector<std::uint32_t>;
+	using PermutationVector = std::vector<Permutation*>;
 }

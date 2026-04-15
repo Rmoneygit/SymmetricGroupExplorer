@@ -21,7 +21,8 @@
 #include "SymUI_error_presentation.hpp"
 #include "SymUI_windows.hpp"
 
-// Standard library includes
+// C++ Standard library includes
+#include <cstdint>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -143,7 +144,7 @@ void SymUI::CalculatorWindow(bool& showWindow)
                 std::string labelText = "##hidden Perm1Input " + std::to_string(i + 1);
                 const char* label = labelText.c_str();
                 // 0 step and 0 step_fast indicate "no plus or minus buttons".
-                if (ImGui::InputInt(label, &inputBuffer1[i], 0, 0))
+                if (SymUI::InputUInt32(label, inputBuffer1[i], 0, 0))
                 {
                     CPPTRACE_TRY
                     {
@@ -187,7 +188,7 @@ void SymUI::CalculatorWindow(bool& showWindow)
                 std::string labelText = "##hidden Perm2Input " + std::to_string(i + 1);
                 const char* label = labelText.c_str();
                 // 0 step and 0 step_fast indicate "no plus or minus buttons".
-                if (ImGui::InputInt(label, &inputBuffer2[i], 0, 0))
+                if (SymUI::InputUInt32(label, inputBuffer2[i], 0, 0))
                 {
                     CPPTRACE_TRY
                     {
@@ -406,7 +407,7 @@ void SymUI::OrderWindow(bool& showWindow)
             std::string labelText = "##hidden OrderPermInput " + std::to_string(i + 1);
             const char* label = labelText.c_str();
             // 0 step and 0 step_fast indicate "no plus or minus buttons".
-            if (ImGui::InputInt(label, &inputBuffer[i], 0, 0))
+            if (SymUI::InputUInt32(label, inputBuffer[i], 0, 0))
             {
                 CPPTRACE_TRY
                 {
@@ -527,4 +528,12 @@ void SymUI::AboutWindow(bool& showWindow)
     ImGui::Text("License: GNU GPL Version 3");
 
     ImGui::End();
+}
+
+bool SymUI::InputUInt32(const char* label, std::uint32_t& v, int step, int step_fast, ImGuiInputTextFlags flags)
+{
+    int temp = static_cast<int>(v);
+    bool returnVal = ImGui::InputInt(label, &temp, 0, 0);
+    v = static_cast<std::uint32_t>(temp);
+    return returnVal;
 }
