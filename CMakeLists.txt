@@ -5,8 +5,8 @@ project(SymmetricGroupExplorer)
 message("FLEX_EXECUTABLE = ${FLEX_EXECUTABLE}")
 message("BISON_EXECUTABLE = ${BISON_EXECUTABLE}")
 
-find_package(IMGUI CONFIG REQUIRED)
-find_package(CPPTRACE CONFIG REQUIRED)
+find_package(imgui CONFIG REQUIRED)
+find_package(cpptrace CONFIG REQUIRED)
 find_package(FLEX REQUIRED)
 find_package(BISON REQUIRED)
 
@@ -63,6 +63,8 @@ target_link_libraries(SymmetricGroupExplorer PRIVATE imgui::imgui cpptrace::cppt
 
 # Add include directories for ImGui backends
 target_include_directories(SymmetricGroupExplorer PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
     ${IMGUI_BACKENDS_DIR}
 )
 

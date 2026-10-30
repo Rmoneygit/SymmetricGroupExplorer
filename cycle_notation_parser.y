@@ -7,10 +7,10 @@
 %{
 #include <iostream>
 #include "cycle_notation_scanner.hpp"
-#include "../Sym_cycle_notation_parser.hpp"
-#include "../Sym_data_types.hpp"
-#include "../Sym_input_processing.hpp"
-#include "../Sym_symmetric_group.hpp"
+#include "Sym_cycle_notation_parser.hpp"
+#include "Sym_data_types.hpp"
+#include "Sym_input_processing.hpp"
+#include "Sym_symmetric_group.hpp"
 
 /* Interface to the scanner*/
 void yyerror(Sym::Permutation&, char* s);
@@ -18,8 +18,8 @@ void yyerror(Sym::Permutation&, char* s);
 %}
 
 %code requires {
-#include "../Sym_cycle_notation_parser.hpp"
-#include "../Sym_data_types.hpp"
+#include "Sym_cycle_notation_parser.hpp"
+#include "Sym_data_types.hpp"
 }
 
 %parse-param { Sym::Permutation& result }

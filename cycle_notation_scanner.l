@@ -13,7 +13,7 @@
 #include <sstream>
 #include <stdexcept>
 #include "cycle_notation_parser.hpp"
-#include "../Sym_cycle_notation_parser.hpp"
+#include "Sym_cycle_notation_parser.hpp"
 %}
 
 %%
