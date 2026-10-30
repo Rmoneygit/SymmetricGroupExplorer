@@ -146,17 +146,13 @@ void SymUI::CalculatorWindow(bool& showWindow)
                 // 0 step and 0 step_fast indicate "no plus or minus buttons".
                 if (SymUI::InputUInt32(label, inputBuffer1[i], 0, 0))
                 {
-                    CPPTRACE_TRY
-                    {
+                    std::string errMsg = "Exception encountered while processing permutation input: ";
+                    const auto& lambda = [&] {
                         Sym::ProcessPermutationInput(i, inputBuffer1, permutation1);
                         dataChanged = true;
-                    }
-                    CPPTRACE_CATCH(const std::exception & e)
-                    {
-                        std::string errorMsg = "Exception encountered while processing permutation input: ";
-                        Sym::PrintErrorToStdErrorStream(e, errorMsg);
-                        SymUI::ShowErrorPopup(e, errorMsg);
-                    }
+                        };
+
+                    SymUI::ProtectedCall(lambda, errMsg);
                 }
             }
         }

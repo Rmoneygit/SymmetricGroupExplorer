@@ -7,10 +7,13 @@
 #pragma once
 
 // Standard library includes
+#include <functional>
 #include <string>
 
 namespace SymUI
 {
     // Displays a Windows popup to the user indicating an error has occurred.
     void ShowErrorPopup(const std::exception& e, const std::string message);
+
+    void ProtectedCall(const std::function<void()>& fn, const std::string& contextErrMsg);
 }
