@@ -23,6 +23,7 @@
 
 // C++ Standard library includes
 #include <cstdint>
+#include <cstring>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -318,6 +319,25 @@ void SymUI::CalculatorWindow(bool& showWindow)
 
         ImGui::Text("Right Permutation");
         ImGui::InputText("##hidden Permutation2 Cycle Input", rawCycleInput2, 30);
+
+        if (ImGui::Button("Use Output"))
+        {
+            CPPTRACE_TRY
+            {
+                // This transfers values to the internal data structure
+                Sym::CopyPermutation(permutation1, composition);
+
+                // This copies the cycle notation string into the user-visible input field
+                std::string cycleStr = Sym::GetCycleNotationString(composition);
+                strcpy(rawCycleInput1, cycleStr.c_str());
+            }
+            CPPTRACE_CATCH(const std::exception & e)
+            {
+                std::string errorMsg = "Exception encountered while executing \"Use Output\" command: ";
+                Sym::PrintErrorToStdErrorStream(e, errorMsg);
+                SymUI::ShowErrorPopup(e, errorMsg);
+            }
+        }
 
         if (ImGui::Button("Compose"))
         {
