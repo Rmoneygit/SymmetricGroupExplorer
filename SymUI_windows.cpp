@@ -88,22 +88,6 @@ void SymUI::MainWindow()
 void SymUI::CalculatorWindow(bool& showWindow)
 {
     static InputMode inputMode = CYCLE;
-    
-    ImGui::Begin("Calculator", &showWindow, ImGuiWindowFlags_MenuBar);
-
-    if (ImGui::BeginMenuBar())
-    {
-        if (ImGui::MenuItem("Table Notation"))
-        {
-            inputMode = TABLE;
-        }
-        if (ImGui::MenuItem("Cycle Notation"))
-        {
-            inputMode = CYCLE;
-        }
-        ImGui::EndMenuBar();
-    }
-
     static int n = 3;
     static int prevN = 3;
     static Sym::Permutation inputBuffer1 = Sym::InitializePermutation(n);
@@ -117,6 +101,10 @@ void SymUI::CalculatorWindow(bool& showWindow)
     static char rawCycleInput1[30] = "(1 2 3)";
     static char rawCycleInput2[30] = "(1 2 3)";
     static std::string compositionString;
+
+    ImGui::Begin("Calculator", &showWindow, ImGuiWindowFlags_MenuBar);
+
+    SymUI::SelectInputMode(inputMode);
 
     if (inputMode == TABLE)
     {
@@ -377,64 +365,97 @@ void SymUI::CalculatorWindow(bool& showWindow)
 
 void SymUI::OrderWindow(bool& showWindow)
 {
+    static InputMode inputMode = CYCLE;
     static int n = 3;
     static int prevN = 3;
     static Sym::Permutation inputBuffer = Sym::InitializePermutation(n);
     static Sym::Permutation permutation = Sym::InitializePermutation(n);
     static Sym::PermutationVector permVector = { &inputBuffer, &permutation };
     static int order = 1;
+    static char rawCycleInput1[30] = "(1 2 3)";
+    static char rawCycleInput2[30] = "(1 2 3)";
+    static std::string compositionString;
 
-    ImGui::Begin("Order", &showWindow);
+    ImGui::Begin("Order", &showWindow, ImGuiWindowFlags_MenuBar);
 
-    PermutationSizeSlider(n, prevN, permVector);
+    SymUI::SelectInputMode(inputMode);
 
-    if (ImGui::BeginTable("orderPermutationTable", n, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
+    if (inputMode == TABLE)
     {
-        for (int i = 0; i < n; i++)
-        {
-            char label[32];
-            sprintf_s(label, "%d", i + 1);
-            ImGui::TableNextColumn();
-            ImGui::Text(label);
-        }
+        PermutationSizeSlider(n, prevN, permVector);
 
-        ImGui::TableNextRow();
-
-        for (int i = 0; i < n; i++)
+        if (ImGui::BeginTable("orderPermutationTable", n, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
         {
-            ImGui::TableNextColumn();
-            // '##hidden' tells imgui to not show the label. But it still needs a unique label to internally identify the input object
-            std::string labelText = "##hidden OrderPermInput " + std::to_string(i + 1);
-            const char* label = labelText.c_str();
-            // 0 step and 0 step_fast indicate "no plus or minus buttons".
-            if (SymUI::InputUInt32(label, inputBuffer[i], 0, 0))
+            for (int i = 0; i < n; i++)
             {
-                CPPTRACE_TRY
+                char label[32];
+                sprintf_s(label, "%d", i + 1);
+                ImGui::TableNextColumn();
+                ImGui::Text(label);
+            }
+
+            ImGui::TableNextRow();
+
+            for (int i = 0; i < n; i++)
+            {
+                ImGui::TableNextColumn();
+                // '##hidden' tells imgui to not show the label. But it still needs a unique label to internally identify the input object
+                std::string labelText = "##hidden OrderPermInput " + std::to_string(i + 1);
+                const char* label = labelText.c_str();
+                // 0 step and 0 step_fast indicate "no plus or minus buttons".
+                if (SymUI::InputUInt32(label, inputBuffer[i], 0, 0))
                 {
-                    Sym::ProcessPermutationInput(i, inputBuffer, permutation);
-                }
-                CPPTRACE_CATCH(const std::exception & e)
-                {
-                    std::string errorMsg = "Exception encountered while processing permutation input: ";
-                    Sym::PrintErrorToStdErrorStream(e, errorMsg);
-                    SymUI::ShowErrorPopup(e, errorMsg);
+                    CPPTRACE_TRY
+                    {
+                        Sym::ProcessPermutationInput(i, inputBuffer, permutation);
+                    }
+                    CPPTRACE_CATCH(const std::exception & e)
+                    {
+                        std::string errorMsg = "Exception encountered while processing permutation input: ";
+                        Sym::PrintErrorToStdErrorStream(e, errorMsg);
+                        SymUI::ShowErrorPopup(e, errorMsg);
+                    }
                 }
             }
         }
-    }
-    ImGui::EndTable();
+        ImGui::EndTable();
 
-    if (ImGui::Button("Calculate Order"))
-    {
-        CPPTRACE_TRY
+        if (ImGui::Button("Calculate Order"))
         {
-            order = Sym::CalculateOrder(permutation);
+            CPPTRACE_TRY
+            {
+                order = Sym::CalculateOrder(permutation);
+            }
+            CPPTRACE_CATCH(const std::exception & e)
+            {
+                std::string errorMsg = "Exception while executing \"Calculate Order\" command: ";
+                Sym::PrintErrorToStdErrorStream(e, errorMsg);
+                SymUI::ShowErrorPopup(e, errorMsg);
+            }
         }
-        CPPTRACE_CATCH(const std::exception & e)
+    }
+    else if (inputMode == CYCLE)
+    {
+        ImGui::InputText("##hidden Permutation1 Cycle Input", rawCycleInput1, 30);
+
+        if (ImGui::Button("Calculate Order"))
         {
-            std::string errorMsg = "Exception encountered while executing command \"Calculate Order\": ";
-            Sym::PrintErrorToStdErrorStream(e, errorMsg);
-            SymUI::ShowErrorPopup(e, errorMsg);
+            CPPTRACE_TRY
+            {
+                permutation = Sym::ProcessCycleNotationInput(rawCycleInput1);
+                order = Sym::CalculateOrder(permutation);
+            }
+            CPPTRACE_CATCH(const std::exception & e)
+            {
+                std::string errorMsg = "Exception while executing \"Calculate Order\" command: ";
+                Sym::PrintErrorToStdErrorStream(e, errorMsg);
+                SymUI::ShowErrorPopup(e, errorMsg);
+
+                for (Sym::Permutation* perm : permVector)
+                {
+                    Sym::SetToIdentity(*perm);
+                }
+            }
         }
     }
 
@@ -536,4 +557,20 @@ bool SymUI::InputUInt32(const char* label, std::uint32_t& v, int step, int step_
     bool returnVal = ImGui::InputInt(label, &temp, 0, 0);
     v = static_cast<std::uint32_t>(temp);
     return returnVal;
+}
+
+void SymUI::SelectInputMode(InputMode& inputMode)
+{
+    if (ImGui::BeginMenuBar())
+    {
+        if (ImGui::MenuItem("Table Notation"))
+        {
+            inputMode = TABLE;
+        }
+        if (ImGui::MenuItem("Cycle Notation"))
+        {
+            inputMode = CYCLE;
+        }
+        ImGui::EndMenuBar();
+    }
 }
