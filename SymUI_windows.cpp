@@ -87,7 +87,7 @@ void SymUI::MainWindow()
 
 void SymUI::CalculatorWindow(bool& showWindow)
 {
-    static InputMode inputMode = TABLE;
+    static InputMode inputMode = CYCLE;
     
     ImGui::Begin("Calculator", &showWindow, ImGuiWindowFlags_MenuBar);
 
