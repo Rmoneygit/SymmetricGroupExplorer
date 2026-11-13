@@ -5,6 +5,8 @@
  */
 
 #include <cstdlib>
+#include <cstdint>
+#include <limits>
 #include <vector>
 #include <stdexcept>
 #include <unordered_set>
@@ -14,20 +16,7 @@
 
 using namespace Sym;
 
-namespace
-{
-    int factorial(const int n)
-    {
-        int val = 1;
-        for (int i = 2; i <= n; i++)
-        {
-            val = val * i;
-        }
-
-        return val;
-    }
-}
-
+// -------------------------------------------------------------------------------------------------
 Permutation Sym::ComposePermutations(const Permutation& permutation1, const Permutation& permutation2)
 {
     if (permutation1.size() != permutation2.size())
@@ -43,6 +32,7 @@ Permutation Sym::ComposePermutations(const Permutation& permutation1, const Perm
     return result;
 }
 
+// -------------------------------------------------------------------------------------------------
 Permutation Sym::ComposePermutations(const PermutationVector& permutations)
 {
     if (permutations.empty())
@@ -60,6 +50,7 @@ Permutation Sym::ComposePermutations(const PermutationVector& permutations)
     return result;
 }
 
+// -------------------------------------------------------------------------------------------------
 void Sym::CommutePermutations(Permutation& permutation1, Permutation& permutation2)
 {
     if(permutation1.size() != permutation2.size())
@@ -73,24 +64,27 @@ void Sym::CommutePermutations(Permutation& permutation1, Permutation& permutatio
     }
 }
 
-int Sym::CalculateOrder(const Permutation& permutation)
+// -------------------------------------------------------------------------------------------------
+std::uint64_t Sym::CalculateOrder(const Permutation& permutation)
 {
+    Sym::ValidatePermutation(permutation);
+    
     Permutation buffer = permutation;
-    int order = 1;
-    const int max_possible = factorial(permutation.size());
+    std::uint64_t order = 1;
     while (!Sym::EqualsIdentity(buffer))
     {
         buffer = Sym::ComposePermutations(buffer, permutation);
 
         order++;
 
-        if (order > max_possible)
-            throw std::invalid_argument("Permutation can never have order greater than the order of the entire symmetric group! The input may be corrupt.");
+        if (order == std::numeric_limits<uint64_t>::max())
+            throw std::invalid_argument("Iterated too many times while trying to calculate order. The input may be corrupt.");
     }
 
     return order;
 }
 
+// -------------------------------------------------------------------------------------------------
 bool Sym::EqualsIdentity(const Permutation& permutation)
 {
     for (int i = 0; i < permutation.size(); i++)
@@ -102,6 +96,7 @@ bool Sym::EqualsIdentity(const Permutation& permutation)
     return true;
 }
 
+// -------------------------------------------------------------------------------------------------
 void Sym::SetToIdentity(Permutation& permutation)
 {
     for (int i = 0; i < permutation.size(); i++)
@@ -110,6 +105,7 @@ void Sym::SetToIdentity(Permutation& permutation)
     }
 }
 
+// -------------------------------------------------------------------------------------------------
 std::string Sym::GetCycleNotationString(const Permutation& permutation)
 {
     std::string cycleString = "";
@@ -171,4 +167,24 @@ std::string Sym::GetCycleNotationString(const Permutation& permutation)
     }
 
     return cycleString;
+}
+
+// -------------------------------------------------------------------------------------------------
+void Sym::ValidatePermutation(const Permutation& permutation)
+{
+    if (permutation.size() == 0)
+        throw std::invalid_argument("Permutation is empty.");
+    
+    std::vector<bool> seenBefore(permutation.size(), false);
+
+    for (std::uint32_t element : permutation)
+    {
+        if (element > permutation.size())
+            throw std::invalid_argument("Permutation maps to a symbol outside its domain.");
+
+        if (seenBefore[element - 1])
+            throw std::invalid_argument("Permutation is not injective - it maps more than one symbol to the same image.");
+
+        seenBefore[element - 1] = true;
+    }
 }

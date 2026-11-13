@@ -22,6 +22,7 @@
 #include "SymUI_windows.hpp"
 
 // C++ Standard library includes
+#include <cinttypes>
 #include <cstdint>
 #include <cstring>
 #include <iostream>
@@ -391,7 +392,7 @@ void SymUI::OrderWindow(bool& showWindow)
     static Sym::Permutation inputBuffer = Sym::InitializePermutation(n);
     static Sym::Permutation permutation = Sym::InitializePermutation(n);
     static Sym::PermutationVector permVector = { &inputBuffer, &permutation };
-    static int order = 1;
+    static std::uint64_t order = 1;
     static char rawCycleInput1[30] = "(1 2 3)";
     static char rawCycleInput2[30] = "(1 2 3)";
     static std::string compositionString;
@@ -479,7 +480,7 @@ void SymUI::OrderWindow(bool& showWindow)
         }
     }
 
-    ImGui::Text("Order: %d", order);
+    ImGui::Text("Order: %" PRIu64, order);
 
     ImGui::End();
 }
@@ -562,7 +563,7 @@ void SymUI::AboutWindow(bool& showWindow)
 
     ImGui::Spacing();
 
-    ImGui::Text("(c) 2024-2025 Ryan Patrick");
+    ImGui::Text("(c) 2024-2026 Ryan Patrick");
 
     ImGui::Spacing();
 
