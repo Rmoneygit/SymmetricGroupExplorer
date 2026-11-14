@@ -6,7 +6,11 @@
 
 #pragma once
 
+ // Normal includes
 #include "Sym_data_types.hpp"
+
+// C++ Standard Library includes
+#include <string>
 
 namespace Sym
 {
@@ -57,4 +61,7 @@ namespace Sym
 
     // Makes all the permutations the same size as the largest one in the list
     void ResizeAllToMax(PermutationVector& permVector);
+
+    // Useful to allow a comma-seperated list of cycle notation strings
+    void SplitCommaSeperatedString(const char* inputString, std::vector<std::string>& list);
 }

@@ -47,4 +47,7 @@ namespace SymUI
     bool InputUInt32(const char* label, std::uint32_t& v, int step = 1, int step_fast = 100, ImGuiInputTextFlags flags = 0);
 
     void SelectInputMode(InputMode& inputMode);
+
+    // Creates and manages the window which is used to calculate information about subgroups of Sn
+    void SubgroupsWindow(bool& showWindow);
 }

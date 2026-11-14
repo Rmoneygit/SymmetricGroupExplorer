@@ -33,6 +33,7 @@ void SymUI::MainWindow()
 {
     static bool showCalculator = false;
     static bool showOrder = false;
+    static bool showSubgroups = false;
     static bool showAbout = false;
 
     if (ImGui::BeginMainMenuBar())
@@ -44,6 +45,10 @@ void SymUI::MainWindow()
         if (ImGui::MenuItem("Order"))
         {
             showOrder = true;
+        }
+        if (ImGui::MenuItem("Subgroups"))
+        {
+            showSubgroups = true;
         }
         if (ImGui::MenuItem("About"))
         {
@@ -76,6 +81,20 @@ void SymUI::MainWindow()
         CPPTRACE_CATCH(const std::exception & e)
         {
             std::string errorMsg = "Unhandled exception encountered in OrderWindow: ";
+            Sym::PrintErrorToStdErrorStream(e, errorMsg);
+            SymUI::ShowErrorPopup(e, errorMsg);
+        }
+    }
+    
+    if (showSubgroups)
+    {
+        CPPTRACE_TRY
+        {
+            SymUI::SubgroupsWindow(showOrder);
+        }
+        CPPTRACE_CATCH(const std::exception& e)
+        {
+            std::string errorMsg = "Unhandled exception encountered in SubgroupsWindow: ";
             Sym::PrintErrorToStdErrorStream(e, errorMsg);
             SymUI::ShowErrorPopup(e, errorMsg);
         }
@@ -594,4 +613,35 @@ void SymUI::SelectInputMode(InputMode& inputMode)
         }
         ImGui::EndMenuBar();
     }
+}
+
+void SymUI::SubgroupsWindow(bool& showWindow)
+{
+    static char rawGeneratorInput[30] = "(1 2 3)";
+    
+    ImGui::Begin("Subgroups", &showWindow, ImGuiWindowFlags_MenuBar);
+
+    ImGui::InputText("##hidden Generators Cycle Input", rawGeneratorInput, 90);
+
+    if (ImGui::Button("Find Generated Subgroup"))
+    {
+        CPPTRACE_TRY
+        {
+            std::vector<std::string> cycleNotationStrings;
+            Sym::SplitCommaSeperatedString(rawGeneratorInput, cycleNotationStrings);
+            std::vector<Sym::Permutation> permutations(cycleNotationStrings.size());
+            for (std::size_t i = 0; i < cycleNotationStrings.size(); ++i)
+            {
+                permutations.at(i) = Sym::ProcessCycleNotationInput(cycleNotationStrings.at(i).c_str());
+            }
+        }
+        CPPTRACE_CATCH(const std::exception& e)
+        {
+            std::string errorMsg = "Exception while executing \"Calculate Generated Subgroup\" command: ";
+            Sym::PrintErrorToStdErrorStream(e, errorMsg);
+            SymUI::ShowErrorPopup(e, errorMsg);
+        }
+    }
+
+    ImGui::End();
 }

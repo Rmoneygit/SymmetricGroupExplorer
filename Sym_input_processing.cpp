@@ -17,6 +17,7 @@
 // C++ Standard Library includes
 #include <cassert>
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <stdexcept>
 
@@ -145,5 +146,18 @@ void Sym::ResizeAllToMax(PermutationVector& permVector)
         {
             perm->push_back(i + 1);
         }
+    }
+}
+
+
+void Sym::SplitCommaSeperatedString(const char* inputString, std::vector<std::string>& list)
+{
+    std::stringstream strStream(inputString);
+
+    while (strStream.good())
+    {
+        std::string substr;
+        std::getline(strStream, substr, ',');
+        list.push_back(substr);
     }
 }
