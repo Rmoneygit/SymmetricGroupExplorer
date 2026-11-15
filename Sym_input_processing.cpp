@@ -23,6 +23,7 @@
 
 using namespace Sym;
 
+// -------------------------------------------------------------------------------------------------
 void Sym::ProcessPermutationInput(int i, Permutation& inputBuffer, Permutation& permutation)
 {
     if (inputBuffer.size() != permutation.size())
@@ -86,6 +87,7 @@ void Sym::ProcessPermutationInput(int i, Permutation& inputBuffer, Permutation& 
     }
 }
 
+// -------------------------------------------------------------------------------------------------
 void Sym::ShrinkPermutationByOne(Permutation& permutation)
 {
     int n = static_cast<int>(permutation.size());
@@ -100,6 +102,7 @@ void Sym::ShrinkPermutationByOne(Permutation& permutation)
     permutation.resize(n - 1);
 }
 
+// -------------------------------------------------------------------------------------------------
 void Sym::CopyPermutation(Permutation& destination, Permutation& source)
 {
     for (int i = 0; i < destination.size(); i++)
@@ -108,6 +111,7 @@ void Sym::CopyPermutation(Permutation& destination, Permutation& source)
     }
 }
 
+// -------------------------------------------------------------------------------------------------
 Permutation Sym::InitializePermutation(int size)
 {
     Permutation permutation;
@@ -120,6 +124,7 @@ Permutation Sym::InitializePermutation(int size)
     return permutation;
 }
 
+// -------------------------------------------------------------------------------------------------
 Permutation Sym::ProcessCycleNotationInput(const char* cycleInput)
 {
     Permutation result;
@@ -136,6 +141,7 @@ Permutation Sym::ProcessCycleNotationInput(const char* cycleInput)
     return result;
 }
 
+// -------------------------------------------------------------------------------------------------
 void Sym::ResizeAllToMax(PermutationPtrVector& permVector)
 {
     size_t maxSize = 1;
@@ -152,14 +158,42 @@ void Sym::ResizeAllToMax(PermutationPtrVector& permVector)
 
     for (Permutation* perm : permVector)
     {
-        for (int i = perm->size(); i < maxSize; i++)
+        for (size_t i = perm->size(); i < maxSize; i++)
         {
             perm->push_back(i + 1);
         }
     }
 }
 
+// -------------------------------------------------------------------------------------------------
+void Sym::ResizeAllToMax(PermutationUnorderedSet& permSet)
+{
+    size_t maxSize = 1;
+    for (Permutation perm : permSet)
+    {
+        if (perm.size() > maxSize)
+            maxSize = perm.size();
+    }
 
+    // Can't safely mutate elements of the unordered_set, since doing so
+    // changes their hash value and can leave them in the wrong bucket. So
+    // build up a new set and then swap them.
+    PermutationUnorderedSet resizedPermSet;
+    for (const Permutation& perm : permSet)
+    {
+        Permutation resizedPerm = perm;
+        for (size_t i = resizedPerm.size(); i < maxSize; i++)
+        {
+            resizedPerm.push_back(static_cast<std::uint32_t>(i + 1));
+        }
+
+        resizedPermSet.insert(resizedPerm);
+    }
+
+    permSet.swap(resizedPermSet);
+}
+
+// -------------------------------------------------------------------------------------------------
 void Sym::SplitCommaSeperatedString(const char* inputString, std::vector<std::string>& list)
 {
     std::stringstream strStream(inputString);

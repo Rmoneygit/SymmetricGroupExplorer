@@ -618,6 +618,8 @@ void SymUI::SelectInputMode(InputMode& inputMode)
 void SymUI::SubgroupsWindow(bool& showWindow)
 {
     static char rawGeneratorInput[30] = "(1 2 3)";
+    static std::string generatedSubgroupStr;
+    static std::string generatedSubgroupSizeStr;
     
     ImGui::Begin("Subgroups", &showWindow, ImGuiWindowFlags_MenuBar);
 
@@ -629,11 +631,26 @@ void SymUI::SubgroupsWindow(bool& showWindow)
         {
             std::vector<std::string> cycleNotationStrings;
             Sym::SplitCommaSeperatedString(rawGeneratorInput, cycleNotationStrings);
-            Sym::PermutationVector permutations(cycleNotationStrings.size());
+            Sym::PermutationUnorderedSet permutations(cycleNotationStrings.size());
             for (std::size_t i = 0; i < cycleNotationStrings.size(); ++i)
             {
-                permutations.at(i) = Sym::ProcessCycleNotationInput(cycleNotationStrings.at(i).c_str());
+                permutations.insert(Sym::ProcessCycleNotationInput(cycleNotationStrings.at(i).c_str()));
             }
+
+            Sym::ResizeAllToMax(permutations);
+            Sym::PermutationUnorderedSet subgroup = Sym::FindGeneratedSubgroup(permutations);
+
+            generatedSubgroupStr = "{ ";
+            std::size_t iteration = 1;
+            for (const Sym::Permutation& element : subgroup)
+            {
+                std::string cycleStr = Sym::GetCycleNotationString(element);
+                generatedSubgroupStr += cycleStr;
+                generatedSubgroupStr += iteration == subgroup.size() ? "" : ", ";
+                iteration++;
+            }
+            generatedSubgroupStr += " }";
+            generatedSubgroupSizeStr = std::to_string(subgroup.size());
         }
         CPPTRACE_CATCH(const std::exception& e)
         {
@@ -642,6 +659,14 @@ void SymUI::SubgroupsWindow(bool& showWindow)
             SymUI::ShowErrorPopup(e, errorMsg);
         }
     }
+
+    ImGui::Spacing();
+    ImGui::Spacing();
+
+    ImGui::Text("Generated Subgroup");
+    ImGui::Text(generatedSubgroupStr.c_str());
+    ImGui::Text("Order");
+    ImGui::Text(generatedSubgroupSizeStr.c_str());
 
     ImGui::End();
 }

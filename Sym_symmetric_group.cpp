@@ -229,4 +229,6 @@ PermutationUnorderedSet Sym::FindGeneratedSubgroup(const PermutationUnorderedSet
             }
         }
     }
+
+    return subgroup;
 }

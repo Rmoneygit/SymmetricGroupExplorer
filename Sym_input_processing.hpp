@@ -23,6 +23,7 @@ namespace Sym
 
     void CopyPermutation(Permutation& destination, Permutation& source);
 
+    // Creates a permutation of the given size, which in cycle notation is (1234...n)
     Permutation InitializePermutation(int size);
 
     // Purpose: Process permutations written in cycle notation.
@@ -61,6 +62,7 @@ namespace Sym
 
     // Makes all the permutations the same size as the largest one in the list
     void ResizeAllToMax(PermutationPtrVector& permVector);
+    void ResizeAllToMax(PermutationUnorderedSet& permSet);
 
     // Useful to allow a comma-seperated list of cycle notation strings
     void SplitCommaSeperatedString(const char* inputString, std::vector<std::string>& list);
