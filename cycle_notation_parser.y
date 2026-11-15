@@ -46,6 +46,9 @@ expression: cycle_list {
 					   }
 
 cycle_list:
+			  cycle {
+						$$ = Sym::AddCycleToTail(nullptr, $1);
+					}
  | cycle_list cycle { 
 						$$ = Sym::AddCycleToTail($1, $2);
 					}
@@ -58,7 +61,10 @@ cycle: '(' number_list ')'	{
 							}
 ;
 
-number_list: /* nothing */
+number_list:
+			   NUMBER       {
+								$$ = Sym::AddNodeToTail(nullptr, $1);
+							}
  | number_list NUMBER		{ 
 								$$ = Sym::AddNodeToTail($1, $2);
 								Sym::PrintNumNodeList($1); 

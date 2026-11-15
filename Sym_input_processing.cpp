@@ -125,9 +125,14 @@ Permutation Sym::ProcessCycleNotationInput(const char* cycleInput)
     Permutation result;
 
     YY_BUFFER_STATE buf = yy_scan_string(cycleInput);
-    yyparse(result);
+    const int parseResult = yyparse(result);
     yy_delete_buffer(buf);
     
+    if (parseResult != 0)
+    {
+        throw std::invalid_argument("Invalid cycle notation");
+    }
+
     return result;
 }
 
@@ -136,6 +141,11 @@ void Sym::ResizeAllToMax(PermutationPtrVector& permVector)
     size_t maxSize = 1;
     for (Permutation* perm : permVector)
     {
+        if (perm == nullptr)
+        {
+            throw std::invalid_argument("Passed a null permutation");
+        }
+        
         if (perm->size() > maxSize)
             maxSize = perm->size();
     }
