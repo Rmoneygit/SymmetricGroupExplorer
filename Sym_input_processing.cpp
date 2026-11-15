@@ -131,7 +131,7 @@ Permutation Sym::ProcessCycleNotationInput(const char* cycleInput)
     return result;
 }
 
-void Sym::ResizeAllToMax(PermutationVector& permVector)
+void Sym::ResizeAllToMax(PermutationPtrVector& permVector)
 {
     size_t maxSize = 1;
     for (Permutation* perm : permVector)

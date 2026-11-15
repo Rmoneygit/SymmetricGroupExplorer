@@ -33,7 +33,7 @@ namespace SymUI
     // Creates a slider widget which controls the number of symbols in each permutation for the current window.
     // The current window is whatever ImGUI window code block this has been invoked inside of. So, it's intended
     // to be called in between a ImGui::Begin and ImGui::End function call.
-    bool PermutationSizeSlider(int& n, int& prevN, Sym::PermutationVector& permVec);
+    bool PermutationSizeSlider(int& n, int& prevN, Sym::PermutationPtrVector& permVec);
 
     // Does what it says on the tin
     void DrawArrowBetweenPoints(ImVec2 source, ImVec2 dest, ImU32 color = IM_COL32_BLACK, float arrowSize = 10.0f, float lineThickness = 2.0f);

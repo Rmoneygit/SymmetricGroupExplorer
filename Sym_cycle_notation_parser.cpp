@@ -122,11 +122,11 @@ Permutation* Sym::CreatePermutation(NumNode* head)
 }
 
 // -------------------------------------------------------------------------------------------------
-PermutationVector* Sym::AddCycleToTail(PermutationVector* vec, Permutation* perm)
+PermutationPtrVector* Sym::AddCycleToTail(PermutationPtrVector* vec, Permutation* perm)
 {
     if (vec == nullptr)
     {
-        vec = new PermutationVector();
+        vec = new PermutationPtrVector();
     }
 
     vec->push_back(perm);

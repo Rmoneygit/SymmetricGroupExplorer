@@ -116,7 +116,7 @@ void SymUI::CalculatorWindow(bool& showWindow)
     static Sym::Permutation permutation1 = Sym::InitializePermutation(n);
     static Sym::Permutation permutation2 = Sym::InitializePermutation(n);
     static Sym::Permutation composition = Sym::InitializePermutation(n);
-    static Sym::PermutationVector permVector = { &inputBuffer1, &inputBuffer2, &permutation1, &permutation2, &composition };
+    static Sym::PermutationPtrVector permVector = { &inputBuffer1, &inputBuffer2, &permutation1, &permutation2, &composition };
     std::vector<ImVec2> perm2InputPositions;
     std::vector<ImVec2> perm1LabelPositions;
     static char rawCycleInput1[30] = "(1 2 3)";
@@ -373,7 +373,7 @@ void SymUI::CalculatorWindow(bool& showWindow)
                 permutation1 = Sym::ProcessCycleNotationInput(rawCycleInput1);
                 permutation2 = Sym::ProcessCycleNotationInput(rawCycleInput2);
 
-                Sym::PermutationVector permVec = { &permutation1, &permutation2 };
+                Sym::PermutationPtrVector permVec = { &permutation1, &permutation2 };
                 Sym::ResizeAllToMax(permVec);
 
                 composition = Sym::ComposePermutations(permutation1, permutation2);
@@ -410,7 +410,7 @@ void SymUI::OrderWindow(bool& showWindow)
     static int prevN = 3;
     static Sym::Permutation inputBuffer = Sym::InitializePermutation(n);
     static Sym::Permutation permutation = Sym::InitializePermutation(n);
-    static Sym::PermutationVector permVector = { &inputBuffer, &permutation };
+    static Sym::PermutationPtrVector permVector = { &inputBuffer, &permutation };
     static std::uint64_t order = 1;
     static char rawCycleInput1[30] = "(1 2 3)";
     static char rawCycleInput2[30] = "(1 2 3)";
@@ -504,7 +504,7 @@ void SymUI::OrderWindow(bool& showWindow)
     ImGui::End();
 }
 
-bool SymUI::PermutationSizeSlider(int& n, int& prevN, Sym::PermutationVector& permVec)
+bool SymUI::PermutationSizeSlider(int& n, int& prevN, Sym::PermutationPtrVector& permVec)
 {
     bool dataChanged = false;
 
@@ -629,7 +629,7 @@ void SymUI::SubgroupsWindow(bool& showWindow)
         {
             std::vector<std::string> cycleNotationStrings;
             Sym::SplitCommaSeperatedString(rawGeneratorInput, cycleNotationStrings);
-            std::vector<Sym::Permutation> permutations(cycleNotationStrings.size());
+            Sym::PermutationVector permutations(cycleNotationStrings.size());
             for (std::size_t i = 0; i < cycleNotationStrings.size(); ++i)
             {
                 permutations.at(i) = Sym::ProcessCycleNotationInput(cycleNotationStrings.at(i).c_str());

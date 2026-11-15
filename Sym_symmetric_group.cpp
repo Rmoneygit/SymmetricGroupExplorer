@@ -33,7 +33,7 @@ Permutation Sym::ComposePermutations(const Permutation& permutation1, const Perm
 }
 
 // -------------------------------------------------------------------------------------------------
-Permutation Sym::ComposePermutations(const PermutationVector& permutations)
+Permutation Sym::ComposePermutations(const PermutationPtrVector& permutations)
 {
     if (permutations.empty())
         throw std::invalid_argument("Trying to compose permuations, but none were provided.");

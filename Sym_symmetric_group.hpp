@@ -15,7 +15,7 @@ namespace Sym
 {
     Permutation ComposePermutations(const Permutation& permutation1, const Permutation& permutation2);
 
-    Permutation ComposePermutations(const PermutationVector& permutations);
+    Permutation ComposePermutations(const PermutationPtrVector& permutations);
 
     void CommutePermutations(Permutation& permutation1, Permutation& permutation2);
 

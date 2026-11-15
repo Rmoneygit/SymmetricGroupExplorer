@@ -12,5 +12,6 @@
 namespace Sym
 {
 	using Permutation = std::vector<std::uint32_t>;
-	using PermutationVector = std::vector<Permutation*>;
+	using PermutationVector = std::vector<Permutation>;
+	using PermutationPtrVector = std::vector<Permutation*>;
 }

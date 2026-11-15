@@ -60,7 +60,7 @@ namespace Sym
     Permutation ProcessCycleNotationInput(const char* cycleInput);
 
     // Makes all the permutations the same size as the largest one in the list
-    void ResizeAllToMax(PermutationVector& permVector);
+    void ResizeAllToMax(PermutationPtrVector& permVector);
 
     // Useful to allow a comma-seperated list of cycle notation strings
     void SplitCommaSeperatedString(const char* inputString, std::vector<std::string>& list);

@@ -28,7 +28,7 @@ void yyerror(Sym::Permutation&, char* s);
 	struct Sym::NumNode* n = nullptr;
 	int i;
 	Sym::Permutation* p;
-	Sym::PermutationVector* pv;
+	Sym::PermutationPtrVector* pv;
 }
 
 %token <i> NUMBER

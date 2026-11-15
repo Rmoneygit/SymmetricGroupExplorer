@@ -24,7 +24,7 @@ namespace Sym
 
     void FreeNumNodeList(NumNode* head);
 
-    PermutationVector* AddCycleToTail(PermutationVector* vec, Permutation* perm);
+    PermutationPtrVector* AddCycleToTail(PermutationPtrVector* vec, Permutation* perm);
 
     Permutation* CreatePermutation(NumNode* head);
 }
