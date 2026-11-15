@@ -188,3 +188,30 @@ void Sym::ValidatePermutation(const Permutation& permutation)
         seenBefore[element - 1] = true;
     }
 }
+
+// -------------------------------------------------------------------------------------------------
+PermutationUnorderedSet Sym::FindGeneratedSubgroup(const PermutationUnorderedSet& subset)
+{
+    PermutationUnorderedSet subgroup;
+    Permutation identity;
+    SetToIdentity(identity);
+    subgroup.insert(identity);
+
+    PermutationUnorderedSet newElements = subset;
+
+    while (!newElements.empty())
+    {
+        PermutationUnorderedSet elementsToProcess = newElements;
+        newElements.clear();
+        for (const Permutation& element : elementsToProcess)
+        {
+            for (const Permutation& member : subgroup)
+            {
+                Permutation composition = ComposePermutations(element, member);
+                const auto result = subgroup.insert(composition);
+                if (result.second)
+                    newElements.insert(composition);
+            }
+        }
+    }
+}

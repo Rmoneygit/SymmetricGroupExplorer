@@ -8,6 +8,7 @@
 
 #include <cstdint>
 #include <string>
+#include <unordered_set>
 
 #include "Sym_data_types.hpp"
 
@@ -28,4 +29,6 @@ namespace Sym
     std::string GetCycleNotationString(const Permutation& permutation);
 
     void ValidatePermutation(const Permutation& permutation);
+
+    PermutationUnorderedSet FindGeneratedSubgroup(const PermutationUnorderedSet& subset);
 }

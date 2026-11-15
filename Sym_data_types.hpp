@@ -6,12 +6,14 @@
 
 #pragma once
 
-#include <vector>
 #include <cstdint>
+#include <vector>
+#include <unordered_set>
 
 namespace Sym
 {
 	using Permutation = std::vector<std::uint32_t>;
 	using PermutationVector = std::vector<Permutation>;
 	using PermutationPtrVector = std::vector<Permutation*>;
+	using PermutationUnorderedSet = std::unordered_set<Permutation>;
 }
