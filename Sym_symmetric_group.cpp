@@ -25,7 +25,7 @@ Permutation Sym::ComposePermutations(const Permutation& permutation1, const Perm
     
     Permutation result(permutation1.size());
 
-    for (int i = 0; i < permutation2.size(); i++)
+    for (std::uint32_t i = 0; i < permutation2.size(); i++)
     {
         result[i] = permutation1[permutation2[i] - 1];
     }
@@ -57,9 +57,9 @@ void Sym::CommutePermutations(Permutation& permutation1, Permutation& permutatio
     if(permutation1.size() != permutation2.size())
         throw std::invalid_argument("Permutations provided should not have different sizes.");
 
-    for (int i = 0; i < permutation1.size(); i++)
+    for (std::uint32_t i = 0; i < permutation1.size(); i++)
     {
-        int temp = permutation1[i];
+        std::uint32_t temp = permutation1[i];
         permutation1[i] = permutation2[i];
         permutation2[i] = temp;
     }
@@ -108,19 +108,17 @@ std::uint64_t Sym::CalculateOrder(const Permutation& permutation)
         //
         // We can keep writing back into the variable "order" because by definition,
         // lcm(a, b, c) = lcm(lcm(a, b), c)
-
-        const auto length = static_cast<std::uint64_t>(cycleLength);
         const auto greatestCommonDivisor = std::gcd(order, cycleLength);
         const auto reducedOrder = order / greatestCommonDivisor;
 
         // Before computing reducedOrder * length, check if the multiplication would cause integer overflow.
-        if (reducedOrder > std::numeric_limits<std::uint64_t>::max() / length)
+        if (reducedOrder > std::numeric_limits<std::uint64_t>::max() / cycleLength)
         {
             throw std::overflow_error("Permutation order exceeds max uint64_t.");
         }
 
 
-        order = reducedOrder * length;
+        order = reducedOrder * cycleLength;
     }
 
     return order;
@@ -129,7 +127,7 @@ std::uint64_t Sym::CalculateOrder(const Permutation& permutation)
 // -------------------------------------------------------------------------------------------------
 bool Sym::EqualsIdentity(const Permutation& permutation)
 {
-    for (int i = 0; i < permutation.size(); i++)
+    for (std::uint32_t i = 0; i < permutation.size(); i++)
     {
         if (permutation[i] != i + 1)
             return false;
@@ -141,7 +139,7 @@ bool Sym::EqualsIdentity(const Permutation& permutation)
 // -------------------------------------------------------------------------------------------------
 void Sym::SetToIdentity(Permutation& permutation)
 {
-    for (int i = 0; i < permutation.size(); i++)
+    for (std::uint32_t i = 0; i < permutation.size(); i++)
     {
         permutation[i] = i + 1;
     }
@@ -151,11 +149,9 @@ void Sym::SetToIdentity(Permutation& permutation)
 std::string Sym::GetCycleNotationString(const Permutation& permutation)
 {
     std::string cycleString = "";
+    std::unordered_set<std::uint32_t> numsFound;
 
-    std::unordered_set<int> numsFound;
-    int n = permutation.size();
-
-    for (int currNum = 1; currNum <= permutation.size(); currNum++)
+    for (std::uint32_t currNum = 1; currNum <= permutation.size(); currNum++)
     {
         // If this number has already been seen in some cycle, skip. In general, it's completely
         // possible and fine for a number to appear in multiple cycles. But here we will write the
@@ -173,12 +169,12 @@ std::string Sym::GetCycleNotationString(const Permutation& permutation)
         }
 
         // Traverse through the cycle that currNum is a part of
-        int cycleStart = currNum;
+        std::uint32_t cycleStart = currNum;
         cycleString += "(";
 
         do
         {
-            int iterations = 0;
+            std::size_t iterations = 0;
 
             // Since this is a set, if this number has already been encountered, inserting again is a no-op
             numsFound.insert(currNum);
