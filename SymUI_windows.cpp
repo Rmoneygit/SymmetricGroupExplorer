@@ -334,10 +334,18 @@ void SymUI::CalculatorWindow(bool& showWindow)
     }
     else if (inputMode == CYCLE)
     {
-        ImGui::Text("Left Permutation");
+        const float inputTextWidth = 200.0f;
+        ImGui::SetNextItemWidth(inputTextWidth);
         ImGui::InputText("##hidden Permutation1 Cycle Input", rawCycleInput1, 30);
 
-        ImGui::Text("Right Permutation");
+        const float spaceBetweenInputs = 40.0f;
+        ImGui::SameLine(inputTextWidth + (spaceBetweenInputs / 2));
+
+        ImGui::Text("*");
+
+        ImGui::SameLine(inputTextWidth + spaceBetweenInputs);
+
+        ImGui::SetNextItemWidth(inputTextWidth);
         ImGui::InputText("##hidden Permutation2 Cycle Input", rawCycleInput2, 30);
 
         if (ImGui::Button("Use Output"))
