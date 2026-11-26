@@ -13,7 +13,7 @@
 #include "Sym_symmetric_group.hpp"
 
 /* Interface to the scanner*/
-void yyerror(Sym::Permutation&, char* s);
+void yyerror(Sym::Permutation&, const char* s);
 
 %}
 
@@ -72,7 +72,7 @@ number_list:
 ;
 %%
 
-void yyerror(Sym::Permutation& p, char* s)
+void yyerror(Sym::Permutation& p, const char* s)
 {
 	std::cout << "Error: " << s << "\n";
 }

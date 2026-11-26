@@ -71,4 +71,14 @@ target_include_directories(SymmetricGroupExplorer PRIVATE
 # Link necessary Windows and DirectX libraries
 target_link_libraries(SymmetricGroupExplorer PRIVATE d3d12 dxgi dxguid)
 
+# CXX_STANDARD: Specifies that the project should be compiled using C++23.
+# CXX_STANDARD_REQUIRED: Specifies that the build is not allowed to "decay" to a previous standard
+# if the requested is not available.
+# CXX_EXTENSIONS: Specifies to turn off compiler-specific extensions to the C++ language
+set_target_properties(SymmetricGroupExplorer PROPERTIES 
+    CXX_STANDARD 23
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
+)
+
 message("CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
