@@ -85,4 +85,15 @@ if(MSVC)
     add_compile_options(/utf-8)
 endif()
 
+# Copy the assets subdirectory to the build executable's output directory
+# 
+# CMAKE_COMMAND: The full path to the cmake executable
+# cmake -E flag: Tells Cmake to run  one of its command-line utility commands instead of configuring or building a project
+# copy_directory: One of Cmake's commands. Instructs Cmake to copy the contents of one directory to another
+add_custom_command(TARGET SymmetricGroupExplorer POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/assets"
+        "$<TARGET_FILE_DIR:SymmetricGroupExplorer>/assets"
+)
+
 message("CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")

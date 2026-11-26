@@ -4,10 +4,15 @@
     Purpose: SymmetricGroupExplorer_main.cpp : Defines the entry point for the application.
  */
 
+// Windows includes
+#include <Windows.h>
+
 // IMGUI 3rd-party library includes
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx12.h"
+
+// DirectX includes
 #include <d3d12.h>
 #include <dxgi1_4.h>
 
@@ -16,7 +21,9 @@
 
 // Standard C++ library includes
 #include <iostream>
+#include <filesystem>
 #include <string>
+#include <system_error>
 #include <tchar.h>
 #include <vector>
 
@@ -114,6 +121,7 @@ void CleanupRenderTarget();
 void WaitForLastSubmittedFrame();
 FrameContext* WaitForNextFrameResources();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+void SetImGuiDefaultFont();
 
 // Main code
 int main(int, char**)
@@ -142,23 +150,8 @@ int main(int, char**)
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-    
-    static const ImWchar glyphRanges[] = {
-        0x0020, 0x00FF,  // Basic Latin + Latin Supplement
-        0x2218, 0x2218,  // Ring operator
-        0
-    };
 
-    // Set the default font as Segoe UI Symbol
-    ImFont* font = io.Fonts->AddFontFromFileTTF(
-        "C:\\Windows\\Fonts\\seguisym.ttf",
-        18.0f,
-        nullptr,
-        glyphRanges
-    );
-
-    IM_ASSERT(font != nullptr);
-    io.FontDefault = font;
+    SetImGuiDefaultFont();
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
@@ -507,4 +500,66 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
         return 0;
     }
     return ::DefWindowProcW(hWnd, msg, wParam, lParam);
+}
+
+// -------------------------------------------------------------------------------------------------
+void SetImGuiDefaultFont()
+{
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    // Initially create the string with length of MAX_PATH characters, all set to '\0'.
+    // GetModuleFileNameW writes into this, and then we trim the trailing characters. 
+    // Typically in Windows path lengths are limited to MAX_PATH=260 characters
+    std::wstring executablePath(MAX_PATH, L'\0');
+    DWORD pathLength = ::GetModuleFileNameW(
+        nullptr,
+        executablePath.data(),
+        static_cast<DWORD>(executablePath.size()));
+    executablePath.resize(pathLength);
+
+    // GetModuleFileNameW returns 0 to indicate failure.
+    if (pathLength == 0)
+    {
+        std::cerr << "Failed to determine the executable path while initializing fonts."
+            "Using ImGui's default font instead.\n";
+        io.FontDefault = io.Fonts->AddFontDefault();
+        return;
+    }
+
+    const std::filesystem::path fontPath = std::filesystem::path(executablePath).parent_path()
+        / L"assets"
+        / L"fonts"
+        / L"LibertinusMath-Regular.ttf";
+
+    static const ImWchar glyphRanges[] = {
+        0x0020, 0x00FF,  // Basic Latin + Latin Supplement
+        0x2218, 0x2218,  // Ring operator
+        0
+    };
+
+    ImFont* font = nullptr;
+    std::error_code fileError;
+    if (!std::filesystem::is_regular_file(fontPath, fileError))
+    {
+        std::wcerr << L"Font path: " << fontPath.wstring() << L'\n';
+        std::cerr << "Filesystem error while trying find font: " << fileError.value()
+            << ": " << fileError.message() << "Using ImGui's defualt font instead." << '\n';
+
+        io.FontDefault = io.Fonts->AddFontDefault();
+        return;
+    }
+
+    // Try to load the desired font and set it as the default
+    font = io.Fonts->AddFontFromFileTTF(
+        fontPath.string().c_str(),
+        18.0f,
+        nullptr,
+        glyphRanges
+    );
+
+    if (font != nullptr)
+        return;
+
+    std::wcerr << L"Font path: " << fontPath.wstring() << L'\n';
+    std::cerr << "Failed to load the font, using ImGui's default font instead.\n";
+    io.FontDefault = io.Fonts->AddFontDefault();
 }
