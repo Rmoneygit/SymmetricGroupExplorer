@@ -1,4 +1,4 @@
-﻿/*
+/*
     Author: Ryan Patrick
     Timestamp: Sep-21-2024
     Purpose: SymmetricGroupExplorer_main.cpp : Defines the entry point for the application.
@@ -142,6 +142,23 @@ int main(int, char**)
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    
+    static const ImWchar glyphRanges[] = {
+        0x0020, 0x00FF,  // Basic Latin + Latin Supplement
+        0x2218, 0x2218,  // Ring operator
+        0
+    };
+
+    // Set the default font as Segoe UI Symbol
+    ImFont* font = io.Fonts->AddFontFromFileTTF(
+        "C:\\Windows\\Fonts\\seguisym.ttf",
+        18.0f,
+        nullptr,
+        glyphRanges
+    );
+
+    IM_ASSERT(font != nullptr);
+    io.FontDefault = font;
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();

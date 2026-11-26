@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.31.0)
+cmake_minimum_required(VERSION 3.31.0)
 
 project(SymmetricGroupExplorer)
 
@@ -80,5 +80,9 @@ set_target_properties(SymmetricGroupExplorer PROPERTIES
     CXX_STANDARD_REQUIRED ON
     CXX_EXTENSIONS OFF
 )
+
+if(MSVC)
+    add_compile_options(/utf-8)
+endif()
 
 message("CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")

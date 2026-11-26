@@ -341,7 +341,7 @@ void SymUI::CalculatorWindow(bool& showWindow)
         const float spaceBetweenInputs = 40.0f;
         ImGui::SameLine(inputTextWidth + (spaceBetweenInputs / 2));
 
-        ImGui::Text("*");
+        ImGui::Text("∘");
 
         ImGui::SameLine(inputTextWidth + spaceBetweenInputs);
 
