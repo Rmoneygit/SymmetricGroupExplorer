@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <cstdint>
 #include <limits>
+#include <numeric>
 #include <vector>
 #include <stdexcept>
 #include <unordered_set>
@@ -65,20 +66,61 @@ void Sym::CommutePermutations(Permutation& permutation1, Permutation& permutatio
 }
 
 // -------------------------------------------------------------------------------------------------
+// This method leverages this theorem: The order of a permutation f in S_n is the least common multiple
+// of the lengths of the disjoint cycles whose product is f.
 std::uint64_t Sym::CalculateOrder(const Permutation& permutation)
 {
     Sym::ValidatePermutation(permutation);
     
-    Permutation buffer = permutation;
     std::uint64_t order = 1;
-    while (!Sym::EqualsIdentity(buffer))
+    std::unordered_set<std::uint32_t> numsFound;
+
+    // Traverse each disjoint cycle in the permutation
+    for (std::uint32_t currNum = 1; currNum <= permutation.size(); currNum++)
     {
-        buffer = Sym::ComposePermutations(buffer, permutation);
+        // If this number has already been seen in some cycle, skip.
+        if (numsFound.find(currNum) != numsFound.end())
+        {
+            continue;
+        }
 
-        order++;
+        // Traverse through the cycle that currNum is a part of
+        std::uint32_t cycleStart = currNum;
+        std::size_t cycleLength = 0;
 
-        if (order == std::numeric_limits<uint64_t>::max())
-            throw std::invalid_argument("Iterated too many times while trying to calculate order. The input may be corrupt.");
+        do
+        {
+            // Since this is a set, if this number has already been encountered, inserting again is a no-op
+            numsFound.insert(currNum);
+
+            currNum = permutation[currNum - 1];
+
+            if (cycleLength > permutation.size())
+            {
+                throw std::exception("Iterated too many times while trying to find the order of the permutation.");
+            }
+
+            cycleLength++;
+        } while (currNum != cycleStart);
+
+        // The below code utilizes this formula:
+        // lcm(a, b) = |ab|/gcd(a, b)
+        //
+        // We can keep writing back into the variable "order" because by definition,
+        // lcm(a, b, c) = lcm(lcm(a, b), c)
+
+        const auto length = static_cast<std::uint64_t>(cycleLength);
+        const auto greatestCommonDivisor = std::gcd(order, cycleLength);
+        const auto reducedOrder = order / greatestCommonDivisor;
+
+        // Before computing reducedOrder * length, check if the multiplication would cause integer overflow.
+        if (reducedOrder > std::numeric_limits<std::uint64_t>::max() / length)
+        {
+            throw std::overflow_error("Permutation order exceeds max uint64_t.");
+        }
+
+
+        order = reducedOrder * length;
     }
 
     return order;
