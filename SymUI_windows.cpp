@@ -90,7 +90,7 @@ void SymUI::MainWindow()
     {
         CPPTRACE_TRY
         {
-            SymUI::SubgroupsWindow(showOrder);
+            SymUI::SubgroupsWindow(showSubgroups);
         }
         CPPTRACE_CATCH(const std::exception& e)
         {
